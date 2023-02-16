@@ -22,13 +22,13 @@ class Loader {
 	 * @return void
 	 */
 	public function enqueue_block_editor_assets() : void {
-		$plugin_name = basename( RELEASE-NOTES_DIR );
+		$plugin_name = basename( RELEASE_NOTES_DIR );
 
 		wp_enqueue_script(
 			self::SCRIPT_NAME,
 			plugins_url( $plugin_name . '/dist/scripts/' . RELEASE_NOTES_EDITOR_JS, $plugin_name ),
 			[ 'wp-blocks', 'wp-i18n', 'wp-element', 'wp-plugins', 'wp-edit-post' ],
-			(string) filemtime( RELEASE-NOTES_DIR . '/dist/scripts/' . RELEASE_NOTES_EDITOR_JS ),
+			(string) filemtime( RELEASE_NOTES_DIR . '/dist/scripts/' . RELEASE_NOTES_EDITOR_JS ),
 			false
 		);
 
@@ -36,7 +36,7 @@ class Loader {
 			self::STYLE_NAME,
 			plugins_url( $plugin_name . '/dist/styles/' . RELEASE_NOTES_EDITOR_CSS, $plugin_name ),
 			[],
-			(string) filemtime( RELEASE-NOTES_DIR . '/dist/styles/' . RELEASE_NOTES_EDITOR_CSS )
+			(string) filemtime( RELEASE_NOTES_DIR . '/dist/styles/' . RELEASE_NOTES_EDITOR_CSS )
 		);
 	}
 }
