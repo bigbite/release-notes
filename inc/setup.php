@@ -18,5 +18,6 @@ function setup() : void {
 	new Loader();
 	new PostType();
 	new Widget();
+	new AdminBar();
 	new Archive();
 }
