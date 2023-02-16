@@ -32,13 +32,6 @@ class Loader {
 			(string) filemtime( RELEASE_NOTES_DIR . '/dist/scripts/' . RELEASE_NOTES_EDITOR_JS ),
 			false
 		);
-
-		wp_enqueue_style(
-			self::STYLE_NAME,
-			plugins_url( $plugin_name . '/dist/styles/' . RELEASE_NOTES_EDITOR_CSS, $plugin_name ),
-			[],
-			(string) filemtime( RELEASE_NOTES_DIR . '/dist/styles/' . RELEASE_NOTES_EDITOR_CSS )
-		);
 	}
 
 	/**

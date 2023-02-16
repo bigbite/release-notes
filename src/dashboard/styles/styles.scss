@@ -18,7 +18,7 @@
   margin: 20px auto;
   font-weight: bold;
 
-  transition: all .2s ease-in-out;
+  transition: all 0.2s ease-in-out;
 
   &:hover, &:focus {
     background: #0073aa;
@@ -42,7 +42,7 @@
 }
 
 .release-note-single.is-new .release-note-header h1::before {
-  content: "";
+  content: '';
   display: inline-block;
   width: 6px;
   height: 6px;
@@ -62,7 +62,7 @@ h1.release-note-title {
   font-size: 18px;
   padding: 2px 4px;
   border-radius: 4px;
-  font-family: "Courier New", Courier, monospace;
+  font-family: 'Courier New', Courier, monospace;
 }
 
 .release-note-body * {
@@ -95,7 +95,7 @@ h1.release-note-title {
 
 li.release-note.is-new > a {
   background: #f56e28 !important;
-  transition: background .2s ease-in-out !important;
+  transition: background 0.2s ease-in-out !important;
 
   &:hover, &:focus {
     color: #fff !important;
