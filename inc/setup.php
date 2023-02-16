@@ -16,4 +16,5 @@ function setup() : void {
 	}
 
 	new Loader();
+	new PostType();
 }
