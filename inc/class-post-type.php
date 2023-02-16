@@ -97,7 +97,14 @@ class PostType {
 			'publicly_queryable'  => true,
 			'capabilities'        => $capabilities,
 			'template'            => [
-				[ 'core/heading' ],
+				[ 'core/heading', [ 'placeholder' => 'Overview' ] ],
+				[ 'core/paragraph' ],
+				[ 'core/heading', [ 'placeholder' => 'Added' ] ],
+				[ 'core/list' ],
+				[ 'core/heading', [ 'placeholder' => 'Changed' ] ],
+				[ 'core/list' ],
+				[ 'core/heading', [ 'placeholder' => 'Fixed' ] ],
+				[ 'core/list' ],
 			],
 		];
 
