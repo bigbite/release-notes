@@ -18,4 +18,5 @@ function setup() : void {
 	new Loader();
 	new PostType();
 	new Widget();
+	new Archive();
 }

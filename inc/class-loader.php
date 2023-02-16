@@ -14,6 +14,7 @@ class Loader {
 	 */
 	public function __construct() {
 		add_action( 'enqueue_block_editor_assets', [ $this, 'enqueue_block_editor_assets' ], 1 );
+		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_admin_assets' ], 1 );
 	}
 
 	/**
@@ -37,6 +38,22 @@ class Loader {
 			plugins_url( $plugin_name . '/dist/styles/' . RELEASE_NOTES_EDITOR_CSS, $plugin_name ),
 			[],
 			(string) filemtime( RELEASE_NOTES_DIR . '/dist/styles/' . RELEASE_NOTES_EDITOR_CSS )
+		);
+	}
+
+	/**
+	 * Enqueue any required assets for the admin.
+	 *
+	 * @return void
+	 */
+	public function enqueue_admin_assets(): void {
+		$plugin_name = basename( RELEASE_NOTES_DIR );
+
+		wp_enqueue_style(
+			sprintf( self::STYLE_NAME, 'dashboard' ),
+			plugins_url( $plugin_name . '/dist/styles/' . RELEASE_NOTES_DASHBOARD_CSS, $plugin_name ),
+			[],
+			(string) filemtime( RELEASE_NOTES_DIR . '/dist/styles/' . RELEASE_NOTES_DASHBOARD_CSS )
 		);
 	}
 }
