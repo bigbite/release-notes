@@ -128,6 +128,7 @@ class PostType {
 				'core/paragraph',
 				'core/list-item',
 				'core/image',
+				'core/video'
 			],
 			default => $allowed_block_types,
 		};
