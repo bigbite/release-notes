@@ -29,6 +29,15 @@ class PostType {
 				'type'         => 'string',
 			]
 		);
+		register_post_meta(
+			'release-note',
+			'release_date',
+			[
+				'show_in_rest' => true,
+				'single'       => true,
+				'type'         => 'string',
+			]
+		);
 	}
 
 	/**

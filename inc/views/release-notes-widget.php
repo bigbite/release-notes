@@ -1,11 +1,17 @@
 <?php
 	$version = get_post_meta( get_the_ID(), 'version', true );
+	$date = get_post_meta( get_the_ID(), 'release_date', true );
 ?>
 
 <article class="release-note-widget">
 	<header class="release-note-header">
 		<h1 class="release-note-title"><?php the_title(); ?></h1>
-		<span class="release-note-version"><?php echo esc_html( $version ); ?></span>
+		<?php if ( ! empty( $date ) ) { ?>
+			<span class="release-note-version"><?php echo esc_html( $date ); ?></span>
+		<?php } ?>
+		<?php if ( ! empty( $version ) ) { ?>
+			<span class="release-note-version"><?php echo esc_html( $version ); ?></span>
+		<?php } ?>
 	</header>
 	<div class="release-note-body">
 		<?php the_content(); ?>
