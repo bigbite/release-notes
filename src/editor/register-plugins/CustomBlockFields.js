@@ -1,5 +1,11 @@
 const { PluginDocumentSettingPanel } = wp.editPost;
-const { PanelRow, DatePicker, __experimentalInputControl: InputControl } = wp.components;
+const {
+  PanelRow,
+  DatePicker,
+  __experimentalInputControl: InputControl,
+  __experimentalText: Text,
+  __experimentalVStack: VStack,
+} = wp.components;
 const { useEntityProp } = wp.coreData;
 const { useSelect } = wp.data;
 const { __ } = wp.i18n;
@@ -26,11 +32,15 @@ function CustomBlockFields() {
             label={__('Version Number')}
           />
         </PanelRow>
+        <br />
         <PanelRow>
-          <DatePicker
-            currentDate={releaseDate}
-            onChange={(val) => onDateChange(new Date(val).toISOString().split('T')[0])}
-          />
+          <VStack>
+            <Text variant="label">{__('Release Date')}</Text>
+            <DatePicker
+              currentDate={releaseDate}
+              onChange={(val) => onDateChange(new Date(val).toISOString().split('T')[0])}
+            />
+          </VStack>
         </PanelRow>
       </PluginDocumentSettingPanel>
     </>
