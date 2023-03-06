@@ -15,6 +15,7 @@ class Loader {
 	public function __construct() {
 		add_action( 'enqueue_block_editor_assets', [ $this, 'enqueue_block_editor_assets' ], 1 );
 		add_action( 'admin_enqueue_scripts', [ $this, 'enqueue_admin_assets' ], 1 );
+		require_once plugin_dir_path( __FILE__ ) . '/gutenberg/blocks/markdown-parser/index.php';
 	}
 
 	/**

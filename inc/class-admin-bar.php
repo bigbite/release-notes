@@ -29,7 +29,7 @@ class AdminBar {
 		$last_week    = strtotime( '-1 week' );
 		$release_date = strtotime( $latest_release->post_date_gmt );
 
-		$is_new = $last_week <= $release_date || ! ReleaseNote::has_viewed( $latest_release->ID, get_current_user_id() );
+		$is_pre_release = get_post_meta( $latest_release->ID, 'is_pre_release', true );
 
 		$version  = get_post_meta( $latest_release->ID, 'version', true );
 		$base_url = admin_url( 'admin.php?page=release-notes' );
@@ -40,7 +40,7 @@ class AdminBar {
 			'href'   => sprintf( '%s&release-id=%d', $base_url, $latest_release->ID ),
 			'parent' => 'top-secondary',
 			'meta'   => [
-				'class' => $is_new ? 'release-note is-new' : 'release-note',
+				'class' => $is_pre_release ? 'release-note is-pre-release' : 'release-note',
 			],
 		] );
 

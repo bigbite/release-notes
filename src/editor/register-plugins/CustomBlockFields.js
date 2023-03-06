@@ -2,6 +2,7 @@ const { PluginDocumentSettingPanel } = wp.editPost;
 const {
   PanelRow,
   DatePicker,
+  ToggleControl,
   __experimentalInputControl: InputControl,
   __experimentalText: Text,
   __experimentalVStack: VStack,
@@ -16,7 +17,7 @@ function CustomBlockFields() {
   if (postType !== 'release-note') return null;
 
   const [meta, setMeta] = useEntityProp('postType', postType, 'meta');
-  const { version, 'release-date': releaseDate } = meta;
+  const { version, is_pre_release: isPrerelease, release_date: releaseDate } = meta;
 
   const onDateChange = (val) => {
     setMeta({ ...meta, release_date: val });
@@ -24,7 +25,7 @@ function CustomBlockFields() {
 
   return (
     <>
-      <PluginDocumentSettingPanel initialOpen>
+      <PluginDocumentSettingPanel initialOpen name="release-notes" title="Release Info">
         <PanelRow>
           <InputControl
             value={version}
@@ -41,6 +42,14 @@ function CustomBlockFields() {
               onChange={(val) => onDateChange(new Date(val).toISOString().split('T')[0])}
             />
           </VStack>
+        </PanelRow>
+        <br />
+        <PanelRow>
+          <ToggleControl
+            label={__('Pre-Release Toggle')}
+            checked={isPrerelease}
+            onChange={(val) => setMeta({ ...meta, is_pre_release: val })}
+          />
         </PanelRow>
       </PluginDocumentSettingPanel>
     </>

@@ -6,12 +6,12 @@
 <article class="release-note-widget">
 	<header class="release-note-header">
 		<h1 class="release-note-title"><?php the_title(); ?></h1>
-		<?php if ( ! empty( $date ) ) { ?>
-			<span class="release-note-version"><?php echo esc_html( $date ); ?></span>
-		<?php } ?>
-		<?php if ( ! empty( $version ) ) { ?>
-			<span class="release-note-version"><?php echo esc_html( $version ); ?></span>
-		<?php } ?>
+		<div class="release-note-meta-wrapper">
+			<span class="release-note-meta release-note-date <?php if( empty( $date ) ) { echo 'empty'; } ?>"><?php echo esc_html( $date ); ?></span>
+		</div>
+		<div class="release-note-meta-wrapper">
+			<span class="release-note-meta release-note-version <?php if( empty( $version ) ) { echo 'empty'; } ?>"><?php echo esc_html( $version ); ?></span>
+		</div>
 	</header>
 	<div class="release-note-body">
 		<?php the_content(); ?>

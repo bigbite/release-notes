@@ -38,6 +38,16 @@ class PostType {
 				'type'         => 'string',
 			]
 		);
+		register_post_meta(
+			'release-note',
+			'is_pre_release',
+			[
+				'show_in_rest' => true,
+				'single'       => true,
+				'type'         => 'boolean',
+				'default'      => false,
+			]
+		);
 	}
 
 	/**
@@ -134,10 +144,13 @@ class PostType {
 
 		return match ( $context->post->post_type ) {
 			'release-note' => [
+				'core/heading',
 				'core/paragraph',
+				'core/list',
 				'core/list-item',
 				'core/image',
-				'core/video'
+				'core/video',
+				'release-notes/markdown-parser'
 			],
 			default => $allowed_block_types,
 		};
