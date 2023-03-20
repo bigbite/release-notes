@@ -61,13 +61,13 @@ class RegisterSettings {
     );
     add_settings_section(
       'section_one',
-      'Enter your Slack API Verification Token below:',
+      'Enter your Slack API App-Level Token below:',
       function() {printf('');},
       'bb_release_notes',
     );
     add_settings_field(
       'bb_release_notes_token',
-      'Slack Verification Token:',
+      'Slack App-Level Token:',
       [$this, 'render_token_field'],
       'bb_release_notes',
       'section_one'
