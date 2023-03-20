@@ -20,4 +20,5 @@ function setup() : void {
 	new Widget();
 	new AdminBar();
 	new Archive();
+	new RegisterSettings();
 }
