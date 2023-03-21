@@ -106,12 +106,22 @@ class ReleasePublish {
     foreach ( $content_arr as $element ) {
       if (str_contains($element, '<h')) {
         $regex = "/<\/?h\d>/m";
+        $text = preg_replace($regex, '', $element);
+        
+        if ( str_contains( $text, '<a' ) ) {
+          $text = preg_replace("/<\/?a.*?>/m", '', $text);
+        }
+
+        $text = preg_replace("/<\/?s>/m", "", $text);
+        $text = preg_replace("/<\/?strong>/m", "", $text);
+        $text = preg_replace("/<\/?em>/m", "", $text);
+        $text = preg_replace("/<\/?code>/m", "", $text);
 
         $block_content = [
           'type' => 'header',
           'text' => [
             'type' => 'plain_text',
-            'text' => preg_replace($regex, '', $element),
+            'text' => $text,
           ]
         ];
 
@@ -123,6 +133,25 @@ class ReleasePublish {
         if ( 0 === strlen($text) ) {
           continue;
         }
+
+        if ( str_contains( $text, '<a' ) ) {
+          preg_match_all("/<a.*>/m", $text, $anchors);
+
+          foreach ($anchors as $anchor) {
+            preg_match("/href=\".*?.\"/m", strval($anchor[0]), $link);
+            $link = str_replace('href="', '', $link[0]);
+            $link = str_replace('"', '', $link);
+
+            $link_text = preg_replace("/<\/?a.*?>/m", '', $anchor[0]);
+
+            $text = str_replace($anchor[0], '<' . $link . '|' . $link_text . '>', $text);
+          }
+        }
+
+        $text = preg_replace("/<\/?s>/m", "~", $text);
+        $text = preg_replace("/<\/?strong>/m", "*", $text);
+        $text = preg_replace("/<\/?em>/m", "_", $text);
+        $text = preg_replace("/<\/?code>/m", "`", $text);
 
         $block_content = [
           'type' => 'section',
@@ -183,7 +212,28 @@ class ReleasePublish {
           }
         }
 
-        $item .= preg_replace($regex, '', $element) . "\n";
+        $text = preg_replace($regex, '', $element) . "\n";
+
+        if ( str_contains( $text, '<a' ) ) {
+          preg_match_all("/<a.*>/m", $text, $anchors);
+
+          foreach ($anchors as $anchor) {
+            preg_match("/href=\".*?.\"/m", strval($anchor[0]), $link);
+            $link = str_replace('href="', '', $link[0]);
+            $link = str_replace('"', '', $link);
+
+            $link_text = preg_replace("/<\/?a.*?>/m", '', $anchor[0]);
+
+            $text = str_replace($anchor[0], '<' . $link . '|' . $link_text . '>', $text);
+          }
+        }
+
+        $text = preg_replace("/<\/?s>/m", "~", $text);
+        $text = preg_replace("/<\/?strong>/m", "*", $text);
+        $text = preg_replace("/<\/?em>/m", "_", $text);
+        $text = preg_replace("/<\/?code>/m", "`", $text);
+
+        $item .= $text;
 
         $list_str .= $item;
       } elseif ( str_contains( $element, '</ul' ) || str_contains( $element, '</ol' ) ) {
