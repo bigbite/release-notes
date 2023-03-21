@@ -21,4 +21,5 @@ function setup() : void {
 	new AdminBar();
 	new Archive();
 	new RegisterSettings();
+	new ReleasePublish();
 }

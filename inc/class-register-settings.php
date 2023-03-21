@@ -3,7 +3,7 @@
 namespace Big_Bite\release_notes;
 
 /**
- * Archive Page handler.
+ * Register Settings.
  */
 class RegisterSettings {
 	/**
@@ -61,48 +61,31 @@ class RegisterSettings {
     );
     add_settings_section(
       'section_one',
-      'Enter your Slack API App-Level Token below:',
+      'Enter your Slack API Webhooks below:',
       function() {printf('');},
       'bb_release_notes',
     );
     add_settings_field(
-      'bb_release_notes_token',
-      'Slack App-Level Token:',
-      [$this, 'render_token_field'],
-      'bb_release_notes',
-      'section_one'
-    );
-    add_settings_field(
-      'bb_release_notes_channel',
-      'Slack Channel:',
-      [$this, 'render_channel_field'],
+      'bb_release_notes_webhooks',
+      'Slack Webhooks:',
+      [$this, 'render_webhooks_field'],
       'bb_release_notes',
       'section_one'
     );
   }
 
-  function render_token_field() {
+  function render_webhooks_field() {
     $options = get_option( 'bb_release_notes_settings' );
     printf(
       '<input type="text" name="%s" value="%s" style="width:500px;" />',
-      esc_attr( 'bb_release_notes_settings[bb_release_notes_token]' ),
-      esc_attr( $options['bb_release_notes_token'] ?? '' )
-    );
-  }
-
-  function render_channel_field() {
-    $options = get_option( 'bb_release_notes_settings' );
-    printf(
-      '# <input type="text" name="%s" value="%s" style="width:calc(500px - 1em);" />',
-      esc_attr( 'bb_release_notes_settings[bb_release_notes_channel]' ),
-      esc_attr( $options['bb_release_notes_channel'] ?? '' )
+      esc_attr( 'bb_release_notes_settings[bb_release_notes_webhooks]' ),
+      esc_attr( $options['bb_release_notes_webhooks'] ?? '' )
     );
   }
 
   function bb_release_notes_validate_plugins($input) {
     $output = [];
-    $output['bb_release_notes_token'] = $input['bb_release_notes_token'];
-    $output['bb_release_notes_channel'] = $input['bb_release_notes_channel'];
+    $output['bb_release_notes_webhooks'] = $input['bb_release_notes_webhooks'];
     return($output);
   }
 }
