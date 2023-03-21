@@ -77,7 +77,32 @@ class ReleasePublish {
 
     $content_arr = explode("\n", $content);
 
-    $blocks = [];
+    $blocks = [
+      [
+        'type' => 'header',
+        'text' => [
+          'type' => 'plain_text',
+          'text' => 'New Release 🎉',
+        ]
+      ],
+      [
+        'type' => 'section',
+        'text' => [
+          'type' => 'mrkdwn',
+          'text' => 'Version: ',
+        ]
+      ],
+      [
+        'type' => 'section',
+        'text' => [
+          'type' => 'mrkdwn',
+          'text' => 'View all details <https://release-notes.bigbite.site/wp-admin/admin.php?page=release-notes&release-id=' . $post->ID . '|here>',
+        ]
+      ],
+      [
+        'type' => 'divider',
+      ],
+    ];
 
     $active_lists = [];
 
@@ -95,17 +120,22 @@ class ReleasePublish {
             'type' => 'plain_text',
             'text' => preg_replace($regex, '', $element),
           ]
-          ];
+        ];
 
         array_push($blocks, $block_content);
       } elseif ( str_contains( $element, '<p' ) ) {
         $regex = "/<\/?p>/m";
+        $text = preg_replace($regex, '', $element);
+
+        if ( 0 === strlen($text) ) {
+          continue;
+        }
 
         $block_content = [
           'type' => 'section',
           'text' => [
             'type' => 'mrkdwn',
-            'text' => preg_replace($regex, '', $element),
+            'text' => $text,
           ]
         ];
 
