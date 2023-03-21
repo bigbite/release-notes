@@ -17,7 +17,7 @@ class ReleasePublish {
    * @param int $number
    * @return string
    */
-  function numberToRomanRepresentation($number) {
+  function number_to_roman_numeral($number) {
     $map = array('M' => 1000, 'CM' => 900, 'D' => 500, 'CD' => 400, 'C' => 100, 'XC' => 90, 'L' => 50, 'XL' => 40, 'X' => 10, 'IX' => 9, 'V' => 5, 'IV' => 4, 'I' => 1);
     $returnValue = '';
     while ($number > 0) {
@@ -34,7 +34,7 @@ class ReleasePublish {
 
   protected $alphabet = 'abcdefghijklmnopqrstuvwxyz';
 
-  public function convert_to_roman( int $count ) {
+  public function number_to_alphabet( int $count ) {
     $length = strlen( $this->alphabet );
 
     if ( $count <= $length ) {
@@ -57,6 +57,33 @@ class ReleasePublish {
     return $bullet;
   }
 
+  public function rich_text_formatter( $text ) {
+    $text = preg_replace("/<\/?s>/m", "~", $text);
+    $text = preg_replace("/<\/?strong>/m", "*", $text);
+    $text = preg_replace("/<\/?em>/m", "_", $text);
+    $text = preg_replace("/<\/?code>/m", "`", $text);
+
+    return $text;
+  }
+
+  public function link_formatter( $text ) {
+    if ( ! str_contains( $text, '<a' ) ) {
+      return $text;
+    }
+    preg_match_all("/<a.*>/m", $text, $anchors);
+
+    foreach ($anchors as $anchor) {
+      preg_match("/href=\".*?.\"/m", strval($anchor[0]), $link);
+      $link = str_replace('href="', '', $link[0]);
+      $link = str_replace('"', '', $link);
+
+      $link_text = preg_replace("/<\/?a.*?>/m", '', $anchor[0]);
+
+      $text = str_replace($anchor[0], '<' . $link . '|' . $link_text . '>', $text);
+    }
+
+    return $text;
+  }
 
   public function post_status_transition( $new_status, $old_status, $post ) {
     if ($new_status === $old_status || 'publish' !== $new_status || 'release-note' !== $post->post_type) {
@@ -134,24 +161,9 @@ class ReleasePublish {
           continue;
         }
 
-        if ( str_contains( $text, '<a' ) ) {
-          preg_match_all("/<a.*>/m", $text, $anchors);
+        $text = $this->link_formatter($text);
 
-          foreach ($anchors as $anchor) {
-            preg_match("/href=\".*?.\"/m", strval($anchor[0]), $link);
-            $link = str_replace('href="', '', $link[0]);
-            $link = str_replace('"', '', $link);
-
-            $link_text = preg_replace("/<\/?a.*?>/m", '', $anchor[0]);
-
-            $text = str_replace($anchor[0], '<' . $link . '|' . $link_text . '>', $text);
-          }
-        }
-
-        $text = preg_replace("/<\/?s>/m", "~", $text);
-        $text = preg_replace("/<\/?strong>/m", "*", $text);
-        $text = preg_replace("/<\/?em>/m", "_", $text);
-        $text = preg_replace("/<\/?code>/m", "`", $text);
+        $text = $this->rich_text_formatter($text);
 
         $block_content = [
           'type' => 'section',
@@ -165,7 +177,6 @@ class ReleasePublish {
       } elseif ( str_contains( $element, '<ul' ) || str_contains( $element, '<ol' ) ) {
         array_push( $active_lists, $element );
         array_push($list_tally, 0);
-
       } elseif ( str_contains( $element, '<li' ) ) {
         $list_tally[ count($list_tally) - 1 ] = end( $list_tally ) + 1;
         $item = '';
@@ -199,11 +210,11 @@ class ReleasePublish {
         if ( str_contains( end($active_lists), '<ol' )) {
           switch (count($active_lists) % 3) {
             case 2:
-              $item .= $this->convert_to_roman(end($list_tally)) . '. ';
+              $item .= $this->number_to_alphabet(end($list_tally)) . '. ';
               break;
 
             case 0:
-              $item .= $this->numberToRomanRepresentation(end($list_tally)) . '. ';
+              $item .= $this->number_to_roman_numeral(end($list_tally)) . '. ';
               break;
             
             default:
@@ -214,24 +225,9 @@ class ReleasePublish {
 
         $text = preg_replace($regex, '', $element) . "\n";
 
-        if ( str_contains( $text, '<a' ) ) {
-          preg_match_all("/<a.*>/m", $text, $anchors);
+        $text = $this->link_formatter($text);
 
-          foreach ($anchors as $anchor) {
-            preg_match("/href=\".*?.\"/m", strval($anchor[0]), $link);
-            $link = str_replace('href="', '', $link[0]);
-            $link = str_replace('"', '', $link);
-
-            $link_text = preg_replace("/<\/?a.*?>/m", '', $anchor[0]);
-
-            $text = str_replace($anchor[0], '<' . $link . '|' . $link_text . '>', $text);
-          }
-        }
-
-        $text = preg_replace("/<\/?s>/m", "~", $text);
-        $text = preg_replace("/<\/?strong>/m", "*", $text);
-        $text = preg_replace("/<\/?em>/m", "_", $text);
-        $text = preg_replace("/<\/?code>/m", "`", $text);
+        $text = $this->rich_text_formatter($text);
 
         $item .= $text;
 
