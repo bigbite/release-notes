@@ -89,13 +89,6 @@ class ReleasePublish {
         'type' => 'section',
         'text' => [
           'type' => 'mrkdwn',
-          'text' => 'Version: ',
-        ]
-      ],
-      [
-        'type' => 'section',
-        'text' => [
-          'type' => 'mrkdwn',
           'text' => 'View all details <https://release-notes.bigbite.site/wp-admin/admin.php?page=release-notes&release-id=' . $post->ID . '|here>',
         ]
       ],
