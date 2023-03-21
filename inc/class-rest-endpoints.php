@@ -36,6 +36,9 @@ class RestEndpoints {
 		] );
 	}
 
+	/**
+	 * Create post when called from circle ci
+	 */
 	public function new_release( \WP_REST_Request $req ) {
 		$params         = $req->get_params();
 		$body           = $params['body'];

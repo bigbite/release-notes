@@ -53,6 +53,9 @@ class RegisterSettings {
     <?php
   }
 
+  /**
+   * register settings
+   */
   function register_settings() {
     register_setting(
       'bb_release_notes_settings',
@@ -74,6 +77,9 @@ class RegisterSettings {
     );
   }
 
+  /**
+   * webhooks field renderer
+   */
   function render_webhooks_field() {
     $options = get_option( 'bb_release_notes_settings' );
     printf(
@@ -83,6 +89,9 @@ class RegisterSettings {
     );
   }
 
+  /**
+   * settings validate
+   */
   function bb_release_notes_validate_plugins($input) {
     $output = [];
     $output['bb_release_notes_webhooks'] = $input['bb_release_notes_webhooks'];
