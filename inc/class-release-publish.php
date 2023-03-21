@@ -73,10 +73,10 @@ class ReleasePublish {
    * @return string
    */
   public function rich_text_formatter( string $text ) {
-    $text = preg_replace("/<\/?s>/m", "~", $text);
-    $text = preg_replace("/<\/?strong>/m", "*", $text);
-    $text = preg_replace("/<\/?em>/m", "_", $text);
-    $text = preg_replace("/<\/?code>/m", "`", $text);
+    $text = preg_replace( "/<\/?s>/m", "~", $text );
+    $text = preg_replace( "/<\/?strong>/m", "*", $text );
+    $text = preg_replace( "/<\/?em>/m", "_", $text );
+    $text = preg_replace( "/<\/?code>/m", "`", $text );
 
     return $text;
   }
@@ -91,16 +91,16 @@ class ReleasePublish {
     if ( ! str_contains( $text, '<a' ) ) {
       return $text;
     }
-    preg_match_all("/<a.*>/m", $text, $anchors);
+    preg_match_all( "/<a.*>/m", $text, $anchors );
 
-    foreach ($anchors as $anchor) {
-      preg_match("/href=\".*?.\"/m", strval($anchor[0]), $link);
-      $link = str_replace('href="', '', $link[0]);
-      $link = str_replace('"', '', $link);
+    foreach ( $anchors as $anchor ) {
+      preg_match( "/href=\".*?.\"/m", strval( $anchor[0] ), $link );
+      $link = str_replace( 'href="', '', $link[0] );
+      $link = str_replace( '"', '', $link );
 
-      $link_text = preg_replace("/<\/?a.*?>/m", '', $anchor[0]);
+      $link_text = preg_replace( "/<\/?a.*?>/m", '', $anchor[0] );
 
-      $text = str_replace($anchor[0], '<' . $link . '|' . $link_text . '>', $text);
+      $text = str_replace( $anchor[0], '<' . $link . '|' . $link_text . '>', $text );
     }
 
     return $text;
@@ -126,7 +126,7 @@ class ReleasePublish {
     
     $content = str_replace( "\n\n", "\n", preg_replace( "/<!--.*-->/m", '', $post_content ) );
 
-    $content_arr = explode("\n", $content);
+    $content_arr = explode( "\n", $content );
 
     $blocks = [
       [
@@ -155,18 +155,18 @@ class ReleasePublish {
     $list_str = '';
 
     foreach ( $content_arr as $element ) {
-      if (str_contains($element, '<h')) {
+      if ( str_contains( $element, '<h' ) ) {
         $regex = "/<\/?h\d>/m";
-        $text = preg_replace($regex, '', $element);
+        $text = preg_replace( $regex, '', $element );
         
         if ( str_contains( $text, '<a' ) ) {
-          $text = preg_replace("/<\/?a.*?>/m", '', $text);
+          $text = preg_replace( "/<\/?a.*?>/m", '', $text );
         }
 
-        $text = preg_replace("/<\/?s>/m", "", $text);
-        $text = preg_replace("/<\/?strong>/m", "", $text);
-        $text = preg_replace("/<\/?em>/m", "", $text);
-        $text = preg_replace("/<\/?code>/m", "", $text);
+        $text = preg_replace( "/<\/?s>/m", "", $text );
+        $text = preg_replace( "/<\/?strong>/m", "", $text );
+        $text = preg_replace( "/<\/?em>/m", "", $text );
+        $text = preg_replace( "/<\/?code>/m", "", $text );
 
         $block_content = [
           'type' => 'header',
@@ -176,18 +176,18 @@ class ReleasePublish {
           ]
         ];
 
-        array_push($blocks, $block_content);
+        array_push( $blocks, $block_content );
       } elseif ( str_contains( $element, '<p' ) ) {
         $regex = "/<\/?p>/m";
-        $text = preg_replace($regex, '', $element);
+        $text = preg_replace( $regex, '', $element );
 
-        if ( 0 === strlen($text) ) {
+        if ( 0 === strlen( $text ) ) {
           continue;
         }
 
-        $text = $this->link_formatter($text);
+        $text = $this->link_formatter( $text );
 
-        $text = $this->rich_text_formatter($text);
+        $text = $this->rich_text_formatter( $text );
 
         $block_content = [
           'type' => 'section',
@@ -197,15 +197,15 @@ class ReleasePublish {
           ]
         ];
 
-        array_push($blocks, $block_content);
+        array_push( $blocks, $block_content );
       } elseif ( str_contains( $element, '<ul' ) || str_contains( $element, '<ol' ) ) {
         array_push( $active_lists, $element );
-        array_push($list_tally, 0);
+        array_push( $list_tally, 0 );
       } elseif ( str_contains( $element, '<li' ) ) {
-        $list_tally[ count($list_tally) - 1 ] = end( $list_tally ) + 1;
+        $list_tally[ count( $list_tally ) - 1 ] = end( $list_tally ) + 1;
         $item = '';
 
-        for ($i=0; $i < count($active_lists); $i += 1) { 
+        for ($i=0; $i < count( $active_lists ); $i += 1) { 
           if ( 0 === $i ) {
             continue;
           }
@@ -215,8 +215,8 @@ class ReleasePublish {
 
         $regex = "/<\/?li>/m";
 
-        if ( str_contains( end($active_lists), '<ul' )) {
-          switch (count($active_lists) % 3) {
+        if ( str_contains( end( $active_lists ), '<ul' ) ) {
+          switch ( count( $active_lists ) % 3 ) {
             case 2:
               $item .= '○ ';
               break;
@@ -231,27 +231,27 @@ class ReleasePublish {
           }
         }
 
-        if ( str_contains( end($active_lists), '<ol' )) {
-          switch (count($active_lists) % 3) {
+        if ( str_contains( end( $active_lists ), '<ol' ) ) {
+          switch ( count( $active_lists ) % 3 ) {
             case 2:
-              $item .= $this->number_to_alphabet(end($list_tally)) . '. ';
+              $item .= $this->number_to_alphabet( end( $list_tally ) ) . '. ';
               break;
 
             case 0:
-              $item .= $this->number_to_roman_numeral(end($list_tally)) . '. ';
+              $item .= $this->number_to_roman_numeral( end( $list_tally ) ) . '. ';
               break;
             
             default:
-              $item .= end($list_tally) . '. ';
+              $item .= end( $list_tally ) . '. ';
               break;
           }
         }
 
-        $text = preg_replace($regex, '', $element) . "\n";
+        $text = preg_replace( $regex, '', $element ) . "\n";
 
-        $text = $this->link_formatter($text);
+        $text = $this->link_formatter( $text );
 
-        $text = $this->rich_text_formatter($text);
+        $text = $this->rich_text_formatter( $text );
 
         $item .= $text;
 
@@ -260,7 +260,7 @@ class ReleasePublish {
         array_pop( $active_lists );
         array_pop( $list_tally );
 
-        if ( 0 === count($active_lists) ) {
+        if ( 0 === count( $active_lists ) ) {
           $block_content = [
             'type' => 'section',
             'text' => [
@@ -269,15 +269,17 @@ class ReleasePublish {
             ]
           ];
   
-          array_push($blocks, $block_content);
+          array_push( $blocks, $block_content );
 
           $list_str = '';
         }
       } elseif ( str_contains( $element, '<img' ) ) {
-        preg_match("/wp-image-\d*/m", $element, $image_id_class);
-        $image_id = intval(str_replace("wp-image-", "", $image_id_class[0]), 10);
+        preg_match( "/wp-image-\d*/m", $element, $image_id_class );
+
+        $image_id = intval( str_replace( "wp-image-", "", $image_id_class[0] ), 10 );
         $image_url = wp_get_attachment_image_src( $image_id, 'medium' );
-        $alt_text = explode('"', explode( 'alt="', $element )[1])[0];
+
+        $alt_text = explode( '"', explode( 'alt="', $element )[1] )[0];
 
         $block_content = [
           'type' => 'image',
@@ -285,17 +287,17 @@ class ReleasePublish {
           'alt_text' => $alt_text,
         ];
 
-        array_push($blocks, $block_content);
+        array_push( $blocks, $block_content );
       }
     }
 
     $response = wp_remote_post( $url, [
-      'body' => json_encode([
+      'body' => json_encode( [
         'blocks' => $blocks
-      ]),
+      ] ),
     ] );
 
-    if ( is_wp_error($response) ) {
+    if ( is_wp_error( $response ) ) {
       wp_die( esc_html( $response->get_error_message() ) );
     }
   }
