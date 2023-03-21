@@ -14,11 +14,13 @@ class ReleasePublish {
 	}
 
   /**
+   * Convert a number into roman numerals for the lists
+   * 
    * @param int $number
    * @return string
    */
-  function number_to_roman_numeral($number) {
-    $map = array('M' => 1000, 'CM' => 900, 'D' => 500, 'CD' => 400, 'C' => 100, 'XC' => 90, 'L' => 50, 'XL' => 40, 'X' => 10, 'IX' => 9, 'V' => 5, 'IV' => 4, 'I' => 1);
+  function number_to_roman_numeral( int $number ) {
+    $map = array('m' => 1000, 'cm' => 900, 'd' => 500, 'cd' => 400, 'c' => 100, 'xc' => 90, 'l' => 50, 'xl' => 40, 'x' => 10, 'ix' => 9, 'v' => 5, 'iv' => 4, 'i' => 1);
     $returnValue = '';
     while ($number > 0) {
         foreach ($map as $roman => $int) {
@@ -34,6 +36,13 @@ class ReleasePublish {
 
   protected $alphabet = 'abcdefghijklmnopqrstuvwxyz';
 
+  /**
+   * Convert a number into the respective letter for the lists
+   * e.g. 2 = b, 28 = ab
+   * 
+   * @param int $count
+   * @return string
+   */
   public function number_to_alphabet( int $count ) {
     $length = strlen( $this->alphabet );
 
@@ -57,7 +66,13 @@ class ReleasePublish {
     return $bullet;
   }
 
-  public function rich_text_formatter( $text ) {
+  /**
+   * Replace the html rich text formats with markdown formats
+   * 
+   * @param string $text
+   * @return string
+   */
+  public function rich_text_formatter( string $text ) {
     $text = preg_replace("/<\/?s>/m", "~", $text);
     $text = preg_replace("/<\/?strong>/m", "*", $text);
     $text = preg_replace("/<\/?em>/m", "_", $text);
@@ -66,7 +81,13 @@ class ReleasePublish {
     return $text;
   }
 
-  public function link_formatter( $text ) {
+  /**
+   * Replace the html link with the Slack Markdown link
+   * 
+   * @param string $text
+   * @return string
+   */
+  public function link_formatter( string $text ) {
     if ( ! str_contains( $text, '<a' ) ) {
       return $text;
     }
@@ -85,6 +106,9 @@ class ReleasePublish {
     return $text;
   }
 
+  /**
+   * Send Slack web hook message on release note publish
+   */
   public function post_status_transition( $new_status, $old_status, $post ) {
     if ($new_status === $old_status || 'publish' !== $new_status || 'release-note' !== $post->post_type) {
       return;
