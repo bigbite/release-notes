@@ -11,314 +11,314 @@ class ReleasePublish {
 	 */
 	public function __construct() {
 		add_action( 'transition_post_status', [ $this, 'post_status_transition' ], 10, 3 );
-    add_action( 'test_scheduled_event', [ $this, 'test_scheduled_event' ] );
+		add_action( 'test_scheduled_event', [ $this, 'test_scheduled_event' ] );
 	}
 
-  /**
-   * Convert a number into roman numerals for the lists
-   * 
-   * @param int $number
-   * @return string
-   */
-  function number_to_roman_numeral( int $number ) {
-    $map = array('m' => 1000, 'cm' => 900, 'd' => 500, 'cd' => 400, 'c' => 100, 'xc' => 90, 'l' => 50, 'xl' => 40, 'x' => 10, 'ix' => 9, 'v' => 5, 'iv' => 4, 'i' => 1);
-    $returnValue = '';
-    while ($number > 0) {
-        foreach ($map as $roman => $int) {
-            if($number >= $int) {
-                $number -= $int;
-                $returnValue .= $roman;
-                break;
-            }
-        }
-    }
-    return $returnValue;
-  }
+	/**
+	 * Convert a number into roman numerals for the lists
+	 *
+	 * @param int $number
+	 * @return string
+	 */
+	function number_to_roman_numeral( int $number ) {
+		$map = array('m' => 1000, 'cm' => 900, 'd' => 500, 'cd' => 400, 'c' => 100, 'xc' => 90, 'l' => 50, 'xl' => 40, 'x' => 10, 'ix' => 9, 'v' => 5, 'iv' => 4, 'i' => 1);
+		$returnValue = '';
+		while ($number > 0) {
+				foreach ($map as $roman => $int) {
+						if($number >= $int) {
+								$number -= $int;
+								$returnValue .= $roman;
+								break;
+						}
+				}
+		}
+		return $returnValue;
+	}
 
-  protected $alphabet = 'abcdefghijklmnopqrstuvwxyz';
+	protected $alphabet = 'abcdefghijklmnopqrstuvwxyz';
 
-  /**
-   * Convert a number into the respective letter for the lists
-   * e.g. 2 = b, 28 = ab
-   * 
-   * @param int $count
-   * @return string
-   */
-  public function number_to_alphabet( int $count ) {
-    $length = strlen( $this->alphabet );
+	/**
+	 * Convert a number into the respective letter for the lists
+	 * e.g. 2 = b, 28 = ab
+	 *
+	 * @param int $count
+	 * @return string
+	 */
+	public function number_to_alphabet( int $count ) {
+		$length = strlen( $this->alphabet );
 
-    if ( $count <= $length ) {
-      return substr( $this->alphabet, $count - 1, 1 );
-    }
+		if ( $count <= $length ) {
+			return substr( $this->alphabet, $count - 1, 1 );
+		}
 
-    $pos = intval( floor( $count / $length ), 10 );
-    $rem = $count % $length;
-    
-    if ( 0 === $rem ) {
-      return substr( $this->alphabet, $pos - 2, 1 ) . substr( $this->alphabet, $length - 1, 1 );
-    }
+		$pos = intval( floor( $count / $length ), 10 );
+		$rem = $count % $length;
 
-    $bullet = substr( $this->alphabet, $pos - 1, 1 );
+		if ( 0 === $rem ) {
+			return substr( $this->alphabet, $pos - 2, 1 ) . substr( $this->alphabet, $length - 1, 1 );
+		}
 
-    if ( $rem > 0 ) {
-      $bullet .= substr( $this->alphabet, $rem - 1, 1 );
-    }
+		$bullet = substr( $this->alphabet, $pos - 1, 1 );
 
-    return $bullet;
-  }
+		if ( $rem > 0 ) {
+			$bullet .= substr( $this->alphabet, $rem - 1, 1 );
+		}
 
-  /**
-   * Replace the html rich text formats with markdown formats
-   * 
-   * @param string $text
-   * @return string
-   */
-  public function rich_text_formatter( string $text ) {
-    $text = preg_replace( "/<\/?s>/m", "~", $text );
-    $text = preg_replace( "/<\/?strong>/m", "*", $text );
-    $text = preg_replace( "/<\/?em>/m", "_", $text );
-    $text = preg_replace( "/<\/?code>/m", "`", $text );
+		return $bullet;
+	}
 
-    return $text;
-  }
+	/**
+	 * Replace the html rich text formats with markdown formats
+	 *
+	 * @param string $text
+	 * @return string
+	 */
+	public function rich_text_formatter( string $text ) {
+		$text = preg_replace( "/<\/?s>/m", "~", $text );
+		$text = preg_replace( "/<\/?strong>/m", "*", $text );
+		$text = preg_replace( "/<\/?em>/m", "_", $text );
+		$text = preg_replace( "/<\/?code>/m", "`", $text );
 
-  /**
-   * Replace the html link with the Slack Markdown link
-   * 
-   * @param string $text
-   * @return string
-   */
-  public function link_formatter( string $text ) {
-    if ( ! str_contains( $text, '<a' ) ) {
-      return $text;
-    }
-    preg_match_all( "/<a.*>/m", $text, $anchors );
+		return $text;
+	}
 
-    foreach ( $anchors as $anchor ) {
-      preg_match( "/href=\".*?.\"/m", strval( $anchor[0] ), $link );
-      $link = str_replace( 'href="', '', $link[0] );
-      $link = str_replace( '"', '', $link );
+	/**
+	 * Replace the html link with the Slack Markdown link
+	 *
+	 * @param string $text
+	 * @return string
+	 */
+	public function link_formatter( string $text ) {
+		if ( ! str_contains( $text, '<a' ) ) {
+			return $text;
+		}
+		preg_match_all( "/<a.*>/m", $text, $anchors );
 
-      $link_text = preg_replace( "/<\/?a.*?>/m", '', $anchor[0] );
+		foreach ( $anchors as $anchor ) {
+			preg_match( "/href=\".*?.\"/m", strval( $anchor[0] ), $link );
+			$link = str_replace( 'href="', '', $link[0] );
+			$link = str_replace( '"', '', $link );
 
-      $text = str_replace( $anchor[0], '<' . $link . '|' . $link_text . '>', $text );
-    }
+			$link_text = preg_replace( "/<\/?a.*?>/m", '', $anchor[0] );
 
-    return $text;
-  }
+			$text = str_replace( $anchor[0], '<' . $link . '|' . $link_text . '>', $text );
+		}
 
-  /**
-   * Send Slack web hook message on release note publish
-   */
-  public function post_status_transition( $new_status, $old_status, $post ) {
-    if ($new_status === $old_status || 'publish' !== $new_status || 'release-note' !== $post->post_type) {
-      return;
-    }
+		return $text;
+	}
 
-    wp_schedule_single_event( time(), 'test_scheduled_event', [ $post->ID ] );
-    return;
+	/**
+	 * Send Slack web hook message on release note publish
+	 */
+	public function post_status_transition( $new_status, $old_status, $post ) {
+		if ($new_status === $old_status || 'publish' !== $new_status || 'release-note' !== $post->post_type) {
+			return;
+		}
 
-  }
+		wp_schedule_single_event( time(), 'test_scheduled_event', [ $post->ID ] );
+		return;
 
-  public function test_scheduled_event( $id ) {
-     $options = get_option( 'bb_release_notes_settings', '' );
+	}
 
-    if ( ! isset( $options['bb_release_notes_webhooks'] ) ) {
-      return;
-    }
+	public function test_scheduled_event( $id ) {
+		 $options = get_option( 'bb_release_notes_settings', '' );
 
-    $url  = $options['bb_release_notes_webhooks'];
-    $post = get_post( $id );
+		if ( ! isset( $options['bb_release_notes_webhooks'] ) ) {
+			return;
+		}
 
-    $post_content = $post->post_content;
-    
-    $content = str_replace( "\n\n", "\n", preg_replace( "/<!--.*-->/m", '', $post_content ) );
+		$url  = $options['bb_release_notes_webhooks'];
+		$post = get_post( $id );
 
-    $content_arr = explode( "\n", $content );
+		$post_content = $post->post_content;
 
-    $header_title = [
-      [
-        'type' => 'header',
-        'text' => [
-          'type' => 'plain_text',
-          'text' => get_post_meta( $id, 'is_pre_release', true ) ? 'New Pre-Release 🎉' : 'New Release 🎉',
-        ],
-      ],
-    ];
+		$content = str_replace( "\n\n", "\n", preg_replace( "/<!--.*-->/m", '', $post_content ) );
 
-    $header_body = [
-      [
-        'type' => 'section',
-        'text' => [
-          'type' => 'plain_text',
-          'text' => 'Version: ' . get_post_meta( $id, 'version', true ),
-        ]
-      ],
-      [
-        'type' => 'section',
-        'text' => [
-          'type' => 'mrkdwn',
-          'text' => 'View all details <https://release-notes.bigbite.site/wp-admin/admin.php?page=release-notes&release-id=' . $post->ID . '|here>',
-        ]
-      ],
-      [
-        'type' => 'divider',
-      ],
-    ];
+		$content_arr = explode( "\n", $content );
 
-    $blocks = array_merge($header_title, $header_body);
+		$header_title = [
+			[
+				'type' => 'header',
+				'text' => [
+					'type' => 'plain_text',
+					'text' => get_post_meta( $id, 'is_pre_release', true ) ? 'New Pre-Release 🎉' : 'New Release 🎉',
+				],
+			],
+		];
 
-    $active_lists = [];
+		$header_body = [
+			[
+				'type' => 'section',
+				'text' => [
+					'type' => 'plain_text',
+					'text' => 'Version: ' . get_post_meta( $id, 'version', true ),
+				]
+			],
+			[
+				'type' => 'section',
+				'text' => [
+					'type' => 'mrkdwn',
+					'text' => 'View all details <https://release-notes.bigbite.site/wp-admin/admin.php?page=release-notes&release-id=' . $post->ID . '|here>',
+				]
+			],
+			[
+				'type' => 'divider',
+			],
+		];
 
-    $list_tally = [];
+		$blocks = array_merge($header_title, $header_body);
 
-    $list_str = '';
+		$active_lists = [];
 
-    foreach ( $content_arr as $element ) {
-      if ( str_contains( $element, '<h' ) ) {
-        $regex = "/<\/?h\d>/m";
-        $text = preg_replace( $regex, '', $element );
-        
-        if ( str_contains( $text, '<a' ) ) {
-          $text = preg_replace( "/<\/?a.*?>/m", '', $text );
-        }
+		$list_tally = [];
 
-        $text = preg_replace( "/<\/?s>/m", "", $text );
-        $text = preg_replace( "/<\/?strong>/m", "", $text );
-        $text = preg_replace( "/<\/?em>/m", "", $text );
-        $text = preg_replace( "/<\/?code>/m", "", $text );
+		$list_str = '';
 
-        $block_content = [
-          'type' => 'header',
-          'text' => [
-            'type' => 'plain_text',
-            'text' => $text,
-          ]
-        ];
+		foreach ( $content_arr as $element ) {
+			if ( str_contains( $element, '<h' ) ) {
+				$regex = "/<\/?h\d>/m";
+				$text = preg_replace( $regex, '', $element );
 
-        array_push( $blocks, $block_content );
-      } elseif ( str_contains( $element, '<p' ) ) {
-        $regex = "/<\/?p>/m";
-        $text = preg_replace( $regex, '', $element );
+				if ( str_contains( $text, '<a' ) ) {
+					$text = preg_replace( "/<\/?a.*?>/m", '', $text );
+				}
 
-        if ( 0 === strlen( $text ) ) {
-          continue;
-        }
+				$text = preg_replace( "/<\/?s>/m", "", $text );
+				$text = preg_replace( "/<\/?strong>/m", "", $text );
+				$text = preg_replace( "/<\/?em>/m", "", $text );
+				$text = preg_replace( "/<\/?code>/m", "", $text );
 
-        $text = $this->link_formatter( $text );
+				$block_content = [
+					'type' => 'header',
+					'text' => [
+						'type' => 'plain_text',
+						'text' => $text,
+					]
+				];
 
-        $text = $this->rich_text_formatter( $text );
+				array_push( $blocks, $block_content );
+			} elseif ( str_contains( $element, '<p' ) ) {
+				$regex = "/<\/?p>/m";
+				$text = preg_replace( $regex, '', $element );
 
-        $block_content = [
-          'type' => 'section',
-          'text' => [
-            'type' => 'mrkdwn',
-            'text' => $text,
-          ]
-        ];
+				if ( 0 === strlen( $text ) ) {
+					continue;
+				}
 
-        array_push( $blocks, $block_content );
-      } elseif ( str_contains( $element, '<ul' ) || str_contains( $element, '<ol' ) ) {
-        array_push( $active_lists, $element );
-        array_push( $list_tally, 0 );
-      } elseif ( str_contains( $element, '<li' ) ) {
-        $list_tally[ count( $list_tally ) - 1 ] = end( $list_tally ) + 1;
-        $item = '';
+				$text = $this->link_formatter( $text );
 
-        for ($i=0; $i < count( $active_lists ); $i += 1) { 
-          if ( 0 === $i ) {
-            continue;
-          }
+				$text = $this->rich_text_formatter( $text );
 
-          $item .= '      ';
-        }
+				$block_content = [
+					'type' => 'section',
+					'text' => [
+						'type' => 'mrkdwn',
+						'text' => $text,
+					]
+				];
 
-        $regex = "/<\/?li>/m";
+				array_push( $blocks, $block_content );
+			} elseif ( str_contains( $element, '<ul' ) || str_contains( $element, '<ol' ) ) {
+				array_push( $active_lists, $element );
+				array_push( $list_tally, 0 );
+			} elseif ( str_contains( $element, '<li' ) ) {
+				$list_tally[ count( $list_tally ) - 1 ] = end( $list_tally ) + 1;
+				$item = '';
 
-        if ( str_contains( end( $active_lists ), '<ul' ) ) {
-          switch ( count( $active_lists ) % 3 ) {
-            case 2:
-              $item .= '○ ';
-              break;
+				for ($i=0; $i < count( $active_lists ); $i += 1) {
+					if ( 0 === $i ) {
+						continue;
+					}
 
-            case 0:
-              $item .= '■ ';
-              break;
-            
-            default:
-              $item .= '• ';
-              break;
-          }
-        }
+					$item .= '      ';
+				}
 
-        if ( str_contains( end( $active_lists ), '<ol' ) ) {
-          switch ( count( $active_lists ) % 3 ) {
-            case 2:
-              $item .= $this->number_to_alphabet( end( $list_tally ) ) . '. ';
-              break;
+				$regex = "/<\/?li>/m";
 
-            case 0:
-              $item .= $this->number_to_roman_numeral( end( $list_tally ) ) . '. ';
-              break;
-            
-            default:
-              $item .= end( $list_tally ) . '. ';
-              break;
-          }
-        }
+				if ( str_contains( end( $active_lists ), '<ul' ) ) {
+					switch ( count( $active_lists ) % 3 ) {
+						case 2:
+							$item .= '○ ';
+							break;
 
-        $text = preg_replace( $regex, '', $element ) . "\n";
+						case 0:
+							$item .= '■ ';
+							break;
 
-        $text = $this->link_formatter( $text );
+						default:
+							$item .= '• ';
+							break;
+					}
+				}
 
-        $text = $this->rich_text_formatter( $text );
+				if ( str_contains( end( $active_lists ), '<ol' ) ) {
+					switch ( count( $active_lists ) % 3 ) {
+						case 2:
+							$item .= $this->number_to_alphabet( end( $list_tally ) ) . '. ';
+							break;
 
-        $item .= $text;
+						case 0:
+							$item .= $this->number_to_roman_numeral( end( $list_tally ) ) . '. ';
+							break;
 
-        $list_str .= $item;
-      } elseif ( str_contains( $element, '</ul' ) || str_contains( $element, '</ol' ) ) {
-        array_pop( $active_lists );
-        array_pop( $list_tally );
+						default:
+							$item .= end( $list_tally ) . '. ';
+							break;
+					}
+				}
 
-        if ( 0 === count( $active_lists ) ) {
-          $block_content = [
-            'type' => 'section',
-            'text' => [
-              'type' => 'mrkdwn',
-              'text' => $list_str,
-            ]
-          ];
-  
-          array_push( $blocks, $block_content );
+				$text = preg_replace( $regex, '', $element ) . "\n";
 
-          $list_str = '';
-        }
-      } elseif ( str_contains( $element, '<img' ) ) {
-        preg_match( "/wp-image-\d*/m", $element, $image_id_class );
+				$text = $this->link_formatter( $text );
 
-        $image_id = intval( str_replace( "wp-image-", "", $image_id_class[0] ), 10 );
-        $image_url = wp_get_attachment_image_src( $image_id, 'medium' );
+				$text = $this->rich_text_formatter( $text );
 
-        $alt_text = explode( '"', explode( 'alt="', $element )[1] )[0];
+				$item .= $text;
 
-        $block_content = [
-          'type' => 'image',
-          'image_url' => $image_url,
-          'alt_text' => $alt_text,
-        ];
+				$list_str .= $item;
+			} elseif ( str_contains( $element, '</ul' ) || str_contains( $element, '</ol' ) ) {
+				array_pop( $active_lists );
+				array_pop( $list_tally );
 
-        array_push( $blocks, $block_content );
-      }
-    }
+				if ( 0 === count( $active_lists ) ) {
+					$block_content = [
+						'type' => 'section',
+						'text' => [
+							'type' => 'mrkdwn',
+							'text' => $list_str,
+						]
+					];
 
-    $response = wp_remote_post( $url, [
-      'body' => json_encode( [
-        'blocks' => $blocks
-      ] ),
-    ] );
+					array_push( $blocks, $block_content );
 
-    // if ( is_wp_error( $response ) ) {
-    //   wp_die( esc_html( $response->get_error_message() ) );
-    // }
-  }
+					$list_str = '';
+				}
+			} elseif ( str_contains( $element, '<img' ) ) {
+				preg_match( "/wp-image-\d*/m", $element, $image_id_class );
+
+				$image_id = intval( str_replace( "wp-image-", "", $image_id_class[0] ), 10 );
+				$image_url = wp_get_attachment_image_src( $image_id, 'medium' );
+
+				$alt_text = explode( '"', explode( 'alt="', $element )[1] )[0];
+
+				$block_content = [
+					'type' => 'image',
+					'image_url' => $image_url,
+					'alt_text' => $alt_text,
+				];
+
+				array_push( $blocks, $block_content );
+			}
+		}
+
+		$response = wp_remote_post( $url, [
+			'body' => json_encode( [
+				'blocks' => $blocks
+			] ),
+		] );
+
+		// if ( is_wp_error( $response ) ) {
+		//   wp_die( esc_html( $response->get_error_message() ) );
+		// }
+	}
 }
