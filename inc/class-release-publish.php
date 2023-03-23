@@ -122,7 +122,11 @@ class ReleasePublish {
 	}
 
 	/**
-	 * Send Slack web hook message on release note publish
+	 * Create cron job to send a message using the slack api
+	 *
+	 * @param string $new_status The new status of the post
+	 * @param string $old_status The old status of the post
+	 * @param WP_Post $post The post itself
 	 */
 	public function post_status_transition( $new_status, $old_status, $post ) {
 		if ($new_status === $old_status || 'publish' !== $new_status || 'release-note' !== $post->post_type) {
@@ -134,6 +138,11 @@ class ReleasePublish {
 
 	}
 
+	/**
+	 * send the release note message with the slack api
+	 *
+	 * @param int $id The ID of the post
+	 */
 	public function test_scheduled_event( $id ) {
 		 $options = get_option( 'bb_release_notes_settings', '' );
 
