@@ -60,7 +60,6 @@ class RegisterSettings {
 		register_setting(
 			'bb_release_notes_settings',
 			'bb_release_notes_settings',
-			[ $this, 'bb_release_notes_validate_plugins' ],
 		);
 		add_settings_section(
 			'section_one',
@@ -87,14 +86,5 @@ class RegisterSettings {
 			esc_attr( 'bb_release_notes_settings[bb_release_notes_webhooks]' ),
 			esc_attr( $options['bb_release_notes_webhooks'] ?? '' )
 		);
-	}
-
-	/**
-	 * settings validate
-	 */
-	function bb_release_notes_validate_plugins($input) {
-		$output = [];
-		$output['bb_release_notes_webhooks'] = $input['bb_release_notes_webhooks'];
-		return $output;
 	}
 }
