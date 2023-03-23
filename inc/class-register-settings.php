@@ -21,8 +21,8 @@ class RegisterSettings {
 	 */
 	public function register_settings_page(): void {
 		add_options_page(
-			__('Release Notes Settings'),
-			__('Release Notes'),
+			__( 'Release Notes Settings', 'release-notes' ),
+			__( 'Release Notes', 'release-notes' ),
 			'manage_options',
 			'release-notes-settings',
 			[ $this, 'render_setting_page' ]
@@ -36,7 +36,7 @@ class RegisterSettings {
 	 */
 	public function render_setting_page(): void {
 		?>
-		<h2><?php __('Release Notes Settings') ?></h2>
+		<h2><?php __( 'Release Notes Settings', 'release-notes' ) ?></h2>
 		<form action="options.php" method="post">
 			<?php
 			settings_fields('bb_release_notes_settings');
