@@ -136,10 +136,25 @@ class ReleasePublish {
 		wp_schedule_single_event( time(), 'test_scheduled_event', [ $post->ID ] );
 	}
 
+	/**
+	 * An array of active lists
+	 *
+	 * @var array
+	 */
 	protected $active_lists = [];
 
+	/**
+	 * An array of the number of current items in each level of a list
+	 *
+	 * @var array
+	 */
 	protected $list_tally = [];
 
+	/**
+	 * The string for the final list
+	 *
+	 * @var string
+	 */
 	protected $list_str = '';
 
 	/**
@@ -316,14 +331,14 @@ class ReleasePublish {
 				'type' => 'section',
 				'text' => [
 					'type' => 'plain_text',
-					'text' => __( 'Version: ' . get_post_meta( $id, 'version', true ), 'release-notes' ),
+					'text' => __( 'Version: ', 'release-notes' ) . get_post_meta( $id, 'version', true ),
 				],
 			],
 			[
 				'type' => 'section',
 				'text' => [
 					'type' => 'mrkdwn',
-					'text' => __( 'View all details <https://release-notes.bigbite.site/wp-admin/admin.php?page=release-notes&release-id=' . $post->ID . '|here>', 'release-notes' ),
+					'text' => __( 'View all details <https://release-notes.bigbite.site/wp-admin/admin.php?page=release-notes&release-id=', 'release-notes' ) . $post->ID . __( '|here>', 'release-notes' ),
 				],
 			],
 			[
