@@ -39,7 +39,7 @@ class RegisterSettings {
 		<h2><?php __( 'Release Notes Settings', 'release-notes' ) ?></h2>
 		<form action="options.php" method="post">
 			<?php
-			settings_fields('bb_release_notes_settings');
+			settings_fields( 'bb_release_notes_settings' );
 			do_settings_sections( 'bb_release_notes' );
 			?>
 
@@ -60,18 +60,18 @@ class RegisterSettings {
 		register_setting(
 			'bb_release_notes_settings',
 			'bb_release_notes_settings',
-			[$this, 'bb_release_notes_validate_plugins'],
+			[ $this, 'bb_release_notes_validate_plugins' ],
 		);
 		add_settings_section(
 			'section_one',
-			'Enter your Slack API Webhooks below:',
+			__( 'Enter your Slack API Webhooks below:', 'release-notes' ),
 			function() {printf('');},
 			'bb_release_notes',
 		);
 		add_settings_field(
 			'bb_release_notes_webhooks',
-			'Slack Webhooks:',
-			[$this, 'render_webhooks_field'],
+			__( 'Slack Webhooks:', 'release-notes' ),
+			[ $this, 'render_webhooks_field' ],
 			'bb_release_notes',
 			'section_one'
 		);
@@ -95,6 +95,6 @@ class RegisterSettings {
 	function bb_release_notes_validate_plugins($input) {
 		$output = [];
 		$output['bb_release_notes_webhooks'] = $input['bb_release_notes_webhooks'];
-		return($output);
+		return $output;
 	}
 }
