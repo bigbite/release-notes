@@ -11,6 +11,7 @@ class ReleasePublish {
 	 */
 	public function __construct() {
 		add_action( 'transition_post_status', [ $this, 'post_status_transition' ], 10, 3 );
+    add_action( 'test_scheduled_event', [ $this, 'test_scheduled_event' ] );
 	}
 
   /**
@@ -114,13 +115,20 @@ class ReleasePublish {
       return;
     }
 
-    $options = get_option( 'bb_release_notes_settings', '' );
+    wp_schedule_single_event( time(), 'test_scheduled_event', [ $post->ID ] );
+    return;
+
+  }
+  
+  public function test_scheduled_event( $id ) {
+     $options = get_option( 'bb_release_notes_settings', '' );
 
     if ( ! isset( $options['bb_release_notes_webhooks'] ) ) {
       return;
     }
 
-    $url = $options['bb_release_notes_webhooks'];
+    $url  = $options['bb_release_notes_webhooks'];
+    $post = get_post( $id );
 
     $post_content = $post->post_content;
     
@@ -134,6 +142,13 @@ class ReleasePublish {
         'text' => [
           'type' => 'plain_text',
           'text' => 'New Release 🎉',
+        ]
+      ],
+      [
+        'type' => 'section',
+        'text' => [
+          'type' => 'plain_text',
+          'text' => 'Version: ' . get_post_meta( $id, 'version', true ),
         ]
       ],
       [
@@ -297,8 +312,8 @@ class ReleasePublish {
       ] ),
     ] );
 
-    if ( is_wp_error( $response ) ) {
-      wp_die( esc_html( $response->get_error_message() ) );
-    }
+    // if ( is_wp_error( $response ) ) {
+    //   wp_die( esc_html( $response->get_error_message() ) );
+    // }
   }
 }
