@@ -119,7 +119,7 @@ class ReleasePublish {
     return;
 
   }
-  
+
   public function test_scheduled_event( $id ) {
      $options = get_option( 'bb_release_notes_settings', '' );
 
@@ -136,14 +136,17 @@ class ReleasePublish {
 
     $content_arr = explode( "\n", $content );
 
-    $blocks = [
+    $header_title = [
       [
         'type' => 'header',
         'text' => [
           'type' => 'plain_text',
-          'text' => 'New Release 🎉',
-        ]
+          'text' => get_post_meta( $id, 'is_pre_release', true ) ? 'New Pre-Release 🎉' : 'New Release 🎉',
+        ],
       ],
+    ];
+
+    $header_body = [
       [
         'type' => 'section',
         'text' => [
@@ -162,6 +165,8 @@ class ReleasePublish {
         'type' => 'divider',
       ],
     ];
+
+    $blocks = array_merge($header_title, $header_body);
 
     $active_lists = [];
 
