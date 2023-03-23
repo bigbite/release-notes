@@ -20,31 +20,31 @@ class ReleasePublish {
 	 * @param int $number The number to be changed to a roman numeral
 	 * @return string The roman numeral convertion for the number provided
 	 */
-	function number_to_roman_numeral( int $number ) {
-		$map = [
-			'm' => 1000,
+	public function number_to_roman_numeral( int $number ) {
+		$map          = [
+			'm'  => 1000,
 			'cm' => 900,
-			'd' => 500,
+			'd'  => 500,
 			'cd' => 400,
-			'c' => 100,
+			'c'  => 100,
 			'xc' => 90,
-			'l' => 50,
+			'l'  => 50,
 			'xl' => 40,
-			'x' => 10,
+			'x'  => 10,
 			'ix' => 9,
-			'v' => 5,
+			'v'  => 5,
 			'iv' => 4,
-			'i' => 1
+			'i'  => 1,
 		];
 		$return_value = '';
 		while ( $number > 0 ) {
-				foreach ( $map as $roman => $int ) {
-						if( $number >= $int ) {
-								$number -= $int;
-								$return_value .= $roman;
-								break;
-						}
+			foreach ( $map as $roman => $int ) {
+				if ( $number >= $int ) {
+					$number       -= $int;
+					$return_value .= $roman;
+					break;
 				}
+			}
 		}
 		return $return_value;
 	}
@@ -124,22 +124,22 @@ class ReleasePublish {
 	/**
 	 * Create cron job to send a message using the slack api
 	 *
-	 * @param string $new_status The new status of the post
-	 * @param string $old_status The old status of the post
+	 * @param string  $new_status The new status of the post
+	 * @param string  $old_status The old status of the post
 	 * @param WP_Post $post The post itself
 	 */
 	public function post_status_transition( $new_status, $old_status, $post ) {
-		if ($new_status === $old_status || 'publish' !== $new_status || 'release-note' !== $post->post_type) {
+		if ( $new_status === $old_status || 'publish' !== $new_status || 'release-note' !== $post->post_type ) {
 			return;
 		}
 
 		wp_schedule_single_event( time(), 'test_scheduled_event', [ $post->ID ] );
-		return;
-
 	}
 
 	protected $active_lists = [];
+
 	protected $list_tally = [];
+
 	protected $list_str = '';
 
 	/**
@@ -151,7 +151,7 @@ class ReleasePublish {
 	public function format_content( $element ) {
 		if ( str_contains( $element, '<h' ) ) {
 			$regex = '/<\/?h\d>/m';
-			$text = preg_replace( $regex, '', $element );
+			$text  = preg_replace( $regex, '', $element );
 
 			if ( str_contains( $text, '<a' ) ) {
 				$text = preg_replace( '/<\/?a.*?>/m', '', $text );
@@ -167,14 +167,14 @@ class ReleasePublish {
 				'text' => [
 					'type' => 'plain_text',
 					'text' => $text,
-				]
+				],
 			];
 
 			return $block_content;
 
 		} elseif ( str_contains( $element, '<p' ) ) {
 			$regex = '/<\/?p>/m';
-			$text = preg_replace( $regex, '', $element );
+			$text  = preg_replace( $regex, '', $element );
 
 			if ( 0 === strlen( $text ) ) {
 				return;
@@ -189,7 +189,7 @@ class ReleasePublish {
 				'text' => [
 					'type' => 'mrkdwn',
 					'text' => $text,
-				]
+				],
 			];
 
 			return $block_content;
@@ -202,7 +202,7 @@ class ReleasePublish {
 		} elseif ( str_contains( $element, '<li' ) ) {
 			$this->list_tally[ count( $this->list_tally ) - 1 ] = end( $this->list_tally ) + 1;
 
-			$item = str_repeat('      ', count( $this->active_lists ) - 1);
+			$item = str_repeat( '      ', count( $this->active_lists ) - 1 );
 
 			$regex = '/<\/?li>/m';
 
@@ -255,7 +255,7 @@ class ReleasePublish {
 					'text' => [
 						'type' => 'mrkdwn',
 						'text' => $this->list_str,
-					]
+					],
 				];
 
 				$this->list_str = '';
@@ -265,15 +265,15 @@ class ReleasePublish {
 		} elseif ( str_contains( $element, '<img' ) ) {
 			preg_match( '/wp-image-\d*/m', $element, $image_id_class );
 
-			$image_id = intval( str_replace( 'wp-image-', '', $image_id_class[0] ), 10 );
+			$image_id  = intval( str_replace( 'wp-image-', '', $image_id_class[0] ), 10 );
 			$image_url = wp_get_attachment_image_src( $image_id, 'medium' );
 
 			$alt_text = explode( '"', explode( 'alt="', $element )[1] )[0];
 
 			$block_content = [
-				'type' => 'image',
+				'type'      => 'image',
 				'image_url' => $image_url,
-				'alt_text' => $alt_text,
+				'alt_text'  => $alt_text,
 			];
 
 			return $block_content;
@@ -281,7 +281,7 @@ class ReleasePublish {
 	}
 
 	/**
-	 * send the release note message with the slack api
+	 * Send the release note message with the slack api
 	 *
 	 * @param int $id The ID of the post
 	 */
@@ -306,7 +306,7 @@ class ReleasePublish {
 				'type' => 'header',
 				'text' => [
 					'type' => 'plain_text',
-					'text' => get_post_meta( $id, 'is_pre_release', true ) ? __( 'New Pre-Release 🎉', 'release-notes' ) : __('New Release 🎉', 'release-notes' ),
+					'text' => get_post_meta( $id, 'is_pre_release', true ) ? __( 'New Pre-Release 🎉', 'release-notes' ) : __( 'New Release 🎉', 'release-notes' ),
 				],
 			],
 		];
@@ -317,21 +317,21 @@ class ReleasePublish {
 				'text' => [
 					'type' => 'plain_text',
 					'text' => __( 'Version: ' . get_post_meta( $id, 'version', true ), 'release-notes' ),
-				]
+				],
 			],
 			[
 				'type' => 'section',
 				'text' => [
 					'type' => 'mrkdwn',
 					'text' => __( 'View all details <https://release-notes.bigbite.site/wp-admin/admin.php?page=release-notes&release-id=' . $post->ID . '|here>', 'release-notes' ),
-				]
+				],
 			],
 			[
 				'type' => 'divider',
 			],
 		];
 
-		$blocks = array_merge($header_title, $header_body);
+		$blocks = array_merge( $header_title, $header_body );
 
 		foreach ( $content_arr as $element ) {
 			$formatted_element = $this->format_content( $element );
@@ -342,8 +342,8 @@ class ReleasePublish {
 		}
 
 		wp_remote_post( $url, [
-			'body' => json_encode( [
-				'blocks' => $blocks
+			'body' => wp_json_encode( [
+				'blocks' => $blocks,
 			] ),
 		] );
 	}

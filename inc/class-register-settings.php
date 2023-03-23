@@ -11,7 +11,7 @@ class RegisterSettings {
 	 */
 	public function __construct() {
 		add_action( 'admin_menu', [ $this, 'register_settings_page' ] );
-		add_action('admin_init', [ $this, 'register_settings' ] );
+		add_action( 'admin_init', [ $this, 'register_settings' ] );
 	}
 
 	/**
@@ -36,7 +36,7 @@ class RegisterSettings {
 	 */
 	public function render_setting_page(): void {
 		?>
-		<h2><?php __( 'Release Notes Settings', 'release-notes' ) ?></h2>
+		<h2><?php __( 'Release Notes Settings', 'release-notes' ); ?></h2>
 		<form action="options.php" method="post">
 			<?php
 			settings_fields( 'bb_release_notes_settings' );
@@ -54,9 +54,9 @@ class RegisterSettings {
 	}
 
 	/**
-	 * register settings
+	 * Register settings
 	 */
-	function register_settings() {
+	public function register_settings() {
 		register_setting(
 			'bb_release_notes_settings',
 			'bb_release_notes_settings',
@@ -64,7 +64,9 @@ class RegisterSettings {
 		add_settings_section(
 			'section_one',
 			__( 'Enter your Slack API Webhooks below:', 'release-notes' ),
-			function() {printf('');},
+			function() {
+				printf( '' );
+			},
 			'bb_release_notes',
 		);
 		add_settings_field(
@@ -77,9 +79,9 @@ class RegisterSettings {
 	}
 
 	/**
-	 * webhooks field renderer
+	 * Webhooks field renderer
 	 */
-	function render_webhooks_field() {
+	public function render_webhooks_field() {
 		$options = get_option( 'bb_release_notes_settings' );
 		printf(
 			'<input type="text" name="%s" value="%s" style="width:500px;" />',

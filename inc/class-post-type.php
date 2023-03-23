@@ -150,7 +150,7 @@ class PostType {
 				'core/list-item',
 				'core/image',
 				'core/video',
-				'release-notes/markdown-parser'
+				'release-notes/markdown-parser',
 			],
 			default => $allowed_block_types,
 		};

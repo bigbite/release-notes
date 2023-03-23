@@ -17,10 +17,10 @@ class RestEndpoints {
 	}
 
 	/**
-	 * add test options
+	 * Add test options
 	 */
 	public function add_test_options() {
-		add_option('release_notes_test_option');
+		add_option( 'release_notes_test_option' );
 	}
 
 	/**
@@ -38,6 +38,8 @@ class RestEndpoints {
 
 	/**
 	 * Create post when called from circle ci
+	 *
+	 * @param \WP_REST_Request $req Rest Request
 	 */
 	public function new_release( \WP_REST_Request $req ) {
 		$params         = $req->get_params();
@@ -53,14 +55,14 @@ class RestEndpoints {
 		}
 
 		$converter = new \League\CommonMark\GithubFlavoredMarkdownConverter([
-			'html_input' => 'strip',
+			'html_input'         => 'strip',
 			'allow_unsafe_links' => false,
 		]);
 
 		$html = (string) $converter->convert( $body );
 
-		$html = str_replace('"', '\"', $html);
-		$html = str_replace("\n", '', $html);
+		$html = str_replace( '"', '\"', $html );
+		$html = str_replace( "\n", '', $html );
 
 		$attributes = wp_json_encode( [
 			'html' => $html,
@@ -72,11 +74,10 @@ class RestEndpoints {
 			'post_type'    => 'release-note',
 			'post_content' => $content,
 			'meta_input'   => [
-				'release_date'   => explode('T', date('c', strtotime($published_at)))[0],
+				'release_date'   => explode( 'T', gmdate( 'c', strtotime( $published_at ) ) )[0],
 				'version'        => $tag,
 				'is_pre_release' => $is_pre_release,
-			]
+			],
 		]);
-		return;
 	}
 }
