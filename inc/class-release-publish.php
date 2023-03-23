@@ -88,10 +88,10 @@ class ReleasePublish {
 	 * @return string
 	 */
 	public function rich_text_formatter( string $text ) {
-		$text = preg_replace( "/<\/?s>/m", "~", $text );
-		$text = preg_replace( "/<\/?strong>/m", "*", $text );
-		$text = preg_replace( "/<\/?em>/m", "_", $text );
-		$text = preg_replace( "/<\/?code>/m", "`", $text );
+		$text = preg_replace( '/<\/?s>/m', '~', $text );
+		$text = preg_replace( '/<\/?strong>/m', '*', $text );
+		$text = preg_replace( '/<\/?em>/m', '_', $text );
+		$text = preg_replace( '/<\/?code>/m', '`', $text );
 
 		return $text;
 	}
@@ -106,14 +106,14 @@ class ReleasePublish {
 		if ( ! str_contains( $text, '<a' ) ) {
 			return $text;
 		}
-		preg_match_all( "/<a.*>/m", $text, $anchors );
+		preg_match_all( '/<a.*>/m', $text, $anchors );
 
 		foreach ( $anchors as $anchor ) {
-			preg_match( "/href=\".*?.\"/m", strval( $anchor[0] ), $link );
+			preg_match( '/href=\".*?.\"/m', strval( $anchor[0] ), $link );
 			$link = str_replace( 'href="', '', $link[0] );
 			$link = str_replace( '"', '', $link );
 
-			$link_text = preg_replace( "/<\/?a.*?>/m", '', $anchor[0] );
+			$link_text = preg_replace( '/<\/?a.*?>/m', '', $anchor[0] );
 
 			$text = str_replace( $anchor[0], '<' . $link . '|' . $link_text . '>', $text );
 		}
@@ -146,7 +146,7 @@ class ReleasePublish {
 
 		$post_content = $post->post_content;
 
-		$content = str_replace( "\n\n", "\n", preg_replace( "/<!--.*-->/m", '', $post_content ) );
+		$content = str_replace( "\n\n", "\n", preg_replace( '/<!--.*-->/m', '', $post_content ) );
 
 		$content_arr = explode( "\n", $content );
 
@@ -155,7 +155,7 @@ class ReleasePublish {
 				'type' => 'header',
 				'text' => [
 					'type' => 'plain_text',
-					'text' => get_post_meta( $id, 'is_pre_release', true ) ? 'New Pre-Release 🎉' : 'New Release 🎉',
+					'text' => get_post_meta( $id, 'is_pre_release', true ) ? __( 'New Pre-Release 🎉', 'release-notes' ) : __('New Release 🎉', 'release-notes' ),
 				],
 			],
 		];
@@ -165,14 +165,14 @@ class ReleasePublish {
 				'type' => 'section',
 				'text' => [
 					'type' => 'plain_text',
-					'text' => 'Version: ' . get_post_meta( $id, 'version', true ),
+					'text' => __( 'Version: ' . get_post_meta( $id, 'version', true ), 'release-notes' ),
 				]
 			],
 			[
 				'type' => 'section',
 				'text' => [
 					'type' => 'mrkdwn',
-					'text' => 'View all details <https://release-notes.bigbite.site/wp-admin/admin.php?page=release-notes&release-id=' . $post->ID . '|here>',
+					'text' => __( 'View all details <https://release-notes.bigbite.site/wp-admin/admin.php?page=release-notes&release-id=' . $post->ID . '|here>', 'release-notes' ),
 				]
 			],
 			[
@@ -190,17 +190,17 @@ class ReleasePublish {
 
 		foreach ( $content_arr as $element ) {
 			if ( str_contains( $element, '<h' ) ) {
-				$regex = "/<\/?h\d>/m";
+				$regex = '/<\/?h\d>/m';
 				$text = preg_replace( $regex, '', $element );
 
 				if ( str_contains( $text, '<a' ) ) {
-					$text = preg_replace( "/<\/?a.*?>/m", '', $text );
+					$text = preg_replace( '/<\/?a.*?>/m', '', $text );
 				}
 
-				$text = preg_replace( "/<\/?s>/m", "", $text );
-				$text = preg_replace( "/<\/?strong>/m", "", $text );
-				$text = preg_replace( "/<\/?em>/m", "", $text );
-				$text = preg_replace( "/<\/?code>/m", "", $text );
+				$text = preg_replace( '/<\/?s>/m', '', $text );
+				$text = preg_replace( '/<\/?strong>/m', '', $text );
+				$text = preg_replace( '/<\/?em>/m', '', $text );
+				$text = preg_replace( '/<\/?code>/m', '', $text );
 
 				$block_content = [
 					'type' => 'header',
@@ -212,7 +212,7 @@ class ReleasePublish {
 
 				array_push( $blocks, $block_content );
 			} elseif ( str_contains( $element, '<p' ) ) {
-				$regex = "/<\/?p>/m";
+				$regex = '/<\/?p>/m';
 				$text = preg_replace( $regex, '', $element );
 
 				if ( 0 === strlen( $text ) ) {
@@ -247,7 +247,7 @@ class ReleasePublish {
 					$item .= '      ';
 				}
 
-				$regex = "/<\/?li>/m";
+				$regex = '/<\/?li>/m';
 
 				if ( str_contains( end( $active_lists ), '<ul' ) ) {
 					switch ( count( $active_lists ) % 3 ) {
@@ -308,9 +308,9 @@ class ReleasePublish {
 					$list_str = '';
 				}
 			} elseif ( str_contains( $element, '<img' ) ) {
-				preg_match( "/wp-image-\d*/m", $element, $image_id_class );
+				preg_match( '/wp-image-\d*/m', $element, $image_id_class );
 
-				$image_id = intval( str_replace( "wp-image-", "", $image_id_class[0] ), 10 );
+				$image_id = intval( str_replace( 'wp-image-', '', $image_id_class[0] ), 10 );
 				$image_url = wp_get_attachment_image_src( $image_id, 'medium' );
 
 				$alt_text = explode( '"', explode( 'alt="', $element )[1] )[0];
