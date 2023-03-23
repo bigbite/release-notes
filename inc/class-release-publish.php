@@ -18,7 +18,7 @@ class ReleasePublish {
 	 * Convert a number into roman numerals for the lists
 	 *
 	 * @param int $number The number to be changed to a roman numeral
-	 * @return string
+	 * @return string The roman numeral convertion for the number provided
 	 */
 	function number_to_roman_numeral( int $number ) {
 		$map = [
@@ -54,7 +54,7 @@ class ReleasePublish {
 	 * e.g. 2 = b, 28 = ab
 	 *
 	 * @param int $count The number to be changed into letters
-	 * @return string
+	 * @return string The alphabetic index conversion for the number provided
 	 */
 	public function number_to_alphabet( int $count ) {
 		$alphabet = 'abcdefghijklmnopqrstuvwxyz';
@@ -85,7 +85,7 @@ class ReleasePublish {
 	 * Replace the html rich text formats with markdown formats
 	 *
 	 * @param string $text The string to have html rich text formats changed into markdown
-	 * @return string
+	 * @return string The text with the correct markdown elements
 	 */
 	public function rich_text_formatter( string $text ) {
 		$text = preg_replace( '/<\/?s>/m', '~', $text );
@@ -100,7 +100,7 @@ class ReleasePublish {
 	 * Replace the html link with the Slack Markdown link
 	 *
 	 * @param string $text The string that contains a link to be converted from html to Slack markdown
-	 * @return string
+	 * @return string The link in the slack markdown format
 	 */
 	public function link_formatter( string $text ) {
 		if ( ! str_contains( $text, '<a' ) ) {
@@ -138,13 +138,164 @@ class ReleasePublish {
 
 	}
 
+	protected $active_lists = [];
+	protected $list_tally = [];
+	protected $list_str = '';
+
+	/**
+	 * Convert the post content into sections for the slack api
+	 *
+	 * @param string $element The element that is being converted into the content
+	 * @return string|null The array to be added to the blocks array or null
+	 */
+	public function format_content( $element ) {
+		if ( str_contains( $element, '<h' ) ) {
+			$regex = '/<\/?h\d>/m';
+			$text = preg_replace( $regex, '', $element );
+
+			if ( str_contains( $text, '<a' ) ) {
+				$text = preg_replace( '/<\/?a.*?>/m', '', $text );
+			}
+
+			$text = preg_replace( '/<\/?s>/m', '', $text );
+			$text = preg_replace( '/<\/?strong>/m', '', $text );
+			$text = preg_replace( '/<\/?em>/m', '', $text );
+			$text = preg_replace( '/<\/?code>/m', '', $text );
+
+			$block_content = [
+				'type' => 'header',
+				'text' => [
+					'type' => 'plain_text',
+					'text' => $text,
+				]
+			];
+
+			return $block_content;
+
+		} elseif ( str_contains( $element, '<p' ) ) {
+			$regex = '/<\/?p>/m';
+			$text = preg_replace( $regex, '', $element );
+
+			if ( 0 === strlen( $text ) ) {
+				return;
+			}
+
+			$text = $this->link_formatter( $text );
+
+			$text = $this->rich_text_formatter( $text );
+
+			$block_content = [
+				'type' => 'section',
+				'text' => [
+					'type' => 'mrkdwn',
+					'text' => $text,
+				]
+			];
+
+			return $block_content;
+
+		} elseif ( str_contains( $element, '<ul' ) || str_contains( $element, '<ol' ) ) {
+			array_push( $this->active_lists, $element );
+			array_push( $this->list_tally, 0 );
+
+			return;
+		} elseif ( str_contains( $element, '<li' ) ) {
+			$this->list_tally[ count( $this->list_tally ) - 1 ] = end( $this->list_tally ) + 1;
+			$item = '';
+
+			for ($i=0; $i < count( $this->active_lists ); $i += 1) {
+				if ( 0 === $i ) {
+					continue;
+				}
+
+				$item .= '      ';
+			}
+
+			$regex = '/<\/?li>/m';
+
+			if ( str_contains( end( $this->active_lists ), '<ul' ) ) {
+				switch ( count( $this->active_lists ) % 3 ) {
+					case 2:
+						$item .= '○ ';
+						break;
+
+					case 0:
+						$item .= '■ ';
+						break;
+
+					default:
+						$item .= '• ';
+						break;
+				}
+			}
+
+			if ( str_contains( end( $this->active_lists ), '<ol' ) ) {
+				switch ( count( $this->active_lists ) % 3 ) {
+					case 2:
+						$item .= $this->number_to_alphabet( end( $this->list_tally ) ) . '. ';
+						break;
+
+					case 0:
+						$item .= $this->number_to_roman_numeral( end( $this->list_tally ) ) . '. ';
+						break;
+
+					default:
+						$item .= end( $this->list_tally ) . '. ';
+						break;
+				}
+			}
+
+			$text = preg_replace( $regex, '', $element ) . "\n";
+
+			$text = $this->link_formatter( $text );
+
+			$text = $this->rich_text_formatter( $text );
+
+			$item .= $text;
+
+			$this->list_str .= $item;
+		} elseif ( str_contains( $element, '</ul' ) || str_contains( $element, '</ol' ) ) {
+			array_pop( $this->active_lists );
+			array_pop( $this->list_tally );
+
+			if ( 0 === count( $this->active_lists ) ) {
+				$block_content = [
+					'type' => 'section',
+					'text' => [
+						'type' => 'mrkdwn',
+						'text' => $this->list_str,
+					]
+				];
+
+				$this->list_str = '';
+				return $block_content;
+
+			}
+		} elseif ( str_contains( $element, '<img' ) ) {
+			preg_match( '/wp-image-\d*/m', $element, $image_id_class );
+
+			$image_id = intval( str_replace( 'wp-image-', '', $image_id_class[0] ), 10 );
+			$image_url = wp_get_attachment_image_src( $image_id, 'medium' );
+
+			$alt_text = explode( '"', explode( 'alt="', $element )[1] )[0];
+
+			$block_content = [
+				'type' => 'image',
+				'image_url' => $image_url,
+				'alt_text' => $alt_text,
+			];
+
+			return $block_content;
+		}
+	}
+
 	/**
 	 * send the release note message with the slack api
 	 *
 	 * @param int $id The ID of the post
 	 */
 	public function test_scheduled_event( $id ) {
-		 $options = get_option( 'bb_release_notes_settings', '' );
+		$options = get_option( 'bb_release_notes_settings', '' );
 
 		if ( ! isset( $options['bb_release_notes_webhooks'] ) ) {
 			return;
@@ -191,150 +342,15 @@ class ReleasePublish {
 
 		$blocks = array_merge($header_title, $header_body);
 
-		$active_lists = [];
-
-		$list_tally = [];
-
-		$list_str = '';
-
 		foreach ( $content_arr as $element ) {
-			if ( str_contains( $element, '<h' ) ) {
-				$regex = '/<\/?h\d>/m';
-				$text = preg_replace( $regex, '', $element );
+			$formatted_element = $this->format_content( $element );
 
-				if ( str_contains( $text, '<a' ) ) {
-					$text = preg_replace( '/<\/?a.*?>/m', '', $text );
-				}
-
-				$text = preg_replace( '/<\/?s>/m', '', $text );
-				$text = preg_replace( '/<\/?strong>/m', '', $text );
-				$text = preg_replace( '/<\/?em>/m', '', $text );
-				$text = preg_replace( '/<\/?code>/m', '', $text );
-
-				$block_content = [
-					'type' => 'header',
-					'text' => [
-						'type' => 'plain_text',
-						'text' => $text,
-					]
-				];
-
-				array_push( $blocks, $block_content );
-			} elseif ( str_contains( $element, '<p' ) ) {
-				$regex = '/<\/?p>/m';
-				$text = preg_replace( $regex, '', $element );
-
-				if ( 0 === strlen( $text ) ) {
-					continue;
-				}
-
-				$text = $this->link_formatter( $text );
-
-				$text = $this->rich_text_formatter( $text );
-
-				$block_content = [
-					'type' => 'section',
-					'text' => [
-						'type' => 'mrkdwn',
-						'text' => $text,
-					]
-				];
-
-				array_push( $blocks, $block_content );
-			} elseif ( str_contains( $element, '<ul' ) || str_contains( $element, '<ol' ) ) {
-				array_push( $active_lists, $element );
-				array_push( $list_tally, 0 );
-			} elseif ( str_contains( $element, '<li' ) ) {
-				$list_tally[ count( $list_tally ) - 1 ] = end( $list_tally ) + 1;
-				$item = '';
-
-				for ($i=0; $i < count( $active_lists ); $i += 1) {
-					if ( 0 === $i ) {
-						continue;
-					}
-
-					$item .= '      ';
-				}
-
-				$regex = '/<\/?li>/m';
-
-				if ( str_contains( end( $active_lists ), '<ul' ) ) {
-					switch ( count( $active_lists ) % 3 ) {
-						case 2:
-							$item .= '○ ';
-							break;
-
-						case 0:
-							$item .= '■ ';
-							break;
-
-						default:
-							$item .= '• ';
-							break;
-					}
-				}
-
-				if ( str_contains( end( $active_lists ), '<ol' ) ) {
-					switch ( count( $active_lists ) % 3 ) {
-						case 2:
-							$item .= $this->number_to_alphabet( end( $list_tally ) ) . '. ';
-							break;
-
-						case 0:
-							$item .= $this->number_to_roman_numeral( end( $list_tally ) ) . '. ';
-							break;
-
-						default:
-							$item .= end( $list_tally ) . '. ';
-							break;
-					}
-				}
-
-				$text = preg_replace( $regex, '', $element ) . "\n";
-
-				$text = $this->link_formatter( $text );
-
-				$text = $this->rich_text_formatter( $text );
-
-				$item .= $text;
-
-				$list_str .= $item;
-			} elseif ( str_contains( $element, '</ul' ) || str_contains( $element, '</ol' ) ) {
-				array_pop( $active_lists );
-				array_pop( $list_tally );
-
-				if ( 0 === count( $active_lists ) ) {
-					$block_content = [
-						'type' => 'section',
-						'text' => [
-							'type' => 'mrkdwn',
-							'text' => $list_str,
-						]
-					];
-
-					array_push( $blocks, $block_content );
-
-					$list_str = '';
-				}
-			} elseif ( str_contains( $element, '<img' ) ) {
-				preg_match( '/wp-image-\d*/m', $element, $image_id_class );
-
-				$image_id = intval( str_replace( 'wp-image-', '', $image_id_class[0] ), 10 );
-				$image_url = wp_get_attachment_image_src( $image_id, 'medium' );
-
-				$alt_text = explode( '"', explode( 'alt="', $element )[1] )[0];
-
-				$block_content = [
-					'type' => 'image',
-					'image_url' => $image_url,
-					'alt_text' => $alt_text,
-				];
-
-				array_push( $blocks, $block_content );
+			if ( null !== $formatted_element ) {
+				array_push( $blocks, $formatted_element );
 			}
 		}
 
-		$response = wp_remote_post( $url, [
+		wp_remote_post( $url, [
 			'body' => json_encode( [
 				'blocks' => $blocks
 			] ),
