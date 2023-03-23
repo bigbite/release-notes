@@ -17,51 +17,65 @@ class ReleasePublish {
 	/**
 	 * Convert a number into roman numerals for the lists
 	 *
-	 * @param int $number
+	 * @param int $number The number to be changed to a roman numeral
 	 * @return string
 	 */
 	function number_to_roman_numeral( int $number ) {
-		$map = array('m' => 1000, 'cm' => 900, 'd' => 500, 'cd' => 400, 'c' => 100, 'xc' => 90, 'l' => 50, 'xl' => 40, 'x' => 10, 'ix' => 9, 'v' => 5, 'iv' => 4, 'i' => 1);
-		$returnValue = '';
-		while ($number > 0) {
-				foreach ($map as $roman => $int) {
-						if($number >= $int) {
+		$map = [
+			'm' => 1000,
+			'cm' => 900,
+			'd' => 500,
+			'cd' => 400,
+			'c' => 100,
+			'xc' => 90,
+			'l' => 50,
+			'xl' => 40,
+			'x' => 10,
+			'ix' => 9,
+			'v' => 5,
+			'iv' => 4,
+			'i' => 1
+		];
+		$return_value = '';
+		while ( $number > 0 ) {
+				foreach ( $map as $roman => $int ) {
+						if( $number >= $int ) {
 								$number -= $int;
-								$returnValue .= $roman;
+								$return_value .= $roman;
 								break;
 						}
 				}
 		}
-		return $returnValue;
+		return $return_value;
 	}
-
-	protected $alphabet = 'abcdefghijklmnopqrstuvwxyz';
 
 	/**
 	 * Convert a number into the respective letter for the lists
 	 * e.g. 2 = b, 28 = ab
 	 *
-	 * @param int $count
+	 * @param int $count The number to be changed into letters
 	 * @return string
 	 */
 	public function number_to_alphabet( int $count ) {
-		$length = strlen( $this->alphabet );
+		$alphabet = 'abcdefghijklmnopqrstuvwxyz';
+
+		$length = strlen( $alphabet );
 
 		if ( $count <= $length ) {
-			return substr( $this->alphabet, $count - 1, 1 );
+			return substr( $alphabet, $count - 1, 1 );
 		}
 
 		$pos = intval( floor( $count / $length ), 10 );
 		$rem = $count % $length;
 
 		if ( 0 === $rem ) {
-			return substr( $this->alphabet, $pos - 2, 1 ) . substr( $this->alphabet, $length - 1, 1 );
+			return substr( $alphabet, $pos - 2, 1 ) . substr( $alphabet, $length - 1, 1 );
 		}
 
-		$bullet = substr( $this->alphabet, $pos - 1, 1 );
+		$bullet = substr( $alphabet, $pos - 1, 1 );
 
 		if ( $rem > 0 ) {
-			$bullet .= substr( $this->alphabet, $rem - 1, 1 );
+			$bullet .= substr( $alphabet, $rem - 1, 1 );
 		}
 
 		return $bullet;
@@ -70,7 +84,7 @@ class ReleasePublish {
 	/**
 	 * Replace the html rich text formats with markdown formats
 	 *
-	 * @param string $text
+	 * @param string $text The string to have html rich text formats changed into markdown
 	 * @return string
 	 */
 	public function rich_text_formatter( string $text ) {
@@ -85,7 +99,7 @@ class ReleasePublish {
 	/**
 	 * Replace the html link with the Slack Markdown link
 	 *
-	 * @param string $text
+	 * @param string $text The string that contains a link to be converted from html to Slack markdown
 	 * @return string
 	 */
 	public function link_formatter( string $text ) {
@@ -316,9 +330,5 @@ class ReleasePublish {
 				'blocks' => $blocks
 			] ),
 		] );
-
-		// if ( is_wp_error( $response ) ) {
-		//   wp_die( esc_html( $response->get_error_message() ) );
-		// }
 	}
 }
