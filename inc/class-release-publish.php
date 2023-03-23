@@ -201,15 +201,8 @@ class ReleasePublish {
 			return;
 		} elseif ( str_contains( $element, '<li' ) ) {
 			$this->list_tally[ count( $this->list_tally ) - 1 ] = end( $this->list_tally ) + 1;
-			$item = '';
 
-			for ($i=0; $i < count( $this->active_lists ); $i += 1) {
-				if ( 0 === $i ) {
-					continue;
-				}
-
-				$item .= '      ';
-			}
+			$item = str_repeat('      ', count( $this->active_lists ) - 1);
 
 			$regex = '/<\/?li>/m';
 
@@ -227,9 +220,7 @@ class ReleasePublish {
 						$item .= '• ';
 						break;
 				}
-			}
-
-			if ( str_contains( end( $this->active_lists ), '<ol' ) ) {
+			} else {
 				switch ( count( $this->active_lists ) % 3 ) {
 					case 2:
 						$item .= $this->number_to_alphabet( end( $this->list_tally ) ) . '. ';
