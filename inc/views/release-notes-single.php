@@ -1,6 +1,6 @@
 <?php
 
-use Big_Bite\release_notes\ReleaseNote;
+use Big_Bite\Release_Notes\ReleaseNote;
 
 $release_id = isset( $_GET['release-id'] ) ? intval( $_GET['release-id'], 10 ) : false; // phpcs:ignore
 

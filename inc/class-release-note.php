@@ -1,5 +1,5 @@
 <?php
-namespace Big_Bite\release_notes;
+namespace Big_Bite\Release_Notes;
 
 /**
  * Helper for fetching latest release-note
