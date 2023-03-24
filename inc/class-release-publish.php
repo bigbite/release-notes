@@ -158,6 +158,141 @@ class ReleasePublish {
 	protected $list_str = '';
 
 	/**
+	 * Header formatter
+	 *
+	 * @param string $element The element that is having the header format applied
+	 * @return string The formatted element
+	 */
+	public function header_format( $element ) {
+		$regex = '/<\/?h\d>/m';
+		$text  = preg_replace( $regex, '', $element );
+
+		if ( str_contains( $text, '<a' ) ) {
+			$text = preg_replace( '/<\/?a.*?>/m', '', $text );
+		}
+
+		$text = preg_replace( '/<\/?s>/m', '', $text );
+		$text = preg_replace( '/<\/?strong>/m', '', $text );
+		$text = preg_replace( '/<\/?em>/m', '', $text );
+		$text = preg_replace( '/<\/?code>/m', '', $text );
+
+		$block_content = [
+			'type' => 'header',
+			'text' => [
+				'type' => 'plain_text',
+				'text' => $text,
+			],
+		];
+
+		return $block_content;
+	}
+
+	/**
+	 * Paragraph formatter
+	 *
+	 * @param string $element The element that is having the paragraph format applied
+	 * @return string The formatted element
+	 */
+	public function paragraph_format( $element ) {
+		$regex = '/<\/?p>/m';
+		$text  = preg_replace( $regex, '', $element );
+
+		if ( 0 === strlen( $text ) ) {
+			return;
+		}
+
+		$text = $this->link_formatter( $text );
+
+		$text = $this->rich_text_formatter( $text );
+
+		$block_content = [
+			'type' => 'section',
+			'text' => [
+				'type' => 'mrkdwn',
+				'text' => $text,
+			],
+		];
+
+		return $block_content;
+	}
+
+	/**
+	 * List Item formatter
+	 *
+	 * @param string $element The element that is having the list item format applied
+	 */
+	public function list_item_format( $element ) {
+		$this->list_tally[ count( $this->list_tally ) - 1 ] = end( $this->list_tally ) + 1;
+
+		$item = str_repeat( '      ', count( $this->active_lists ) - 1 );
+
+		$regex = '/<\/?li>/m';
+
+		if ( str_contains( end( $this->active_lists ), '<ul' ) ) {
+			switch ( count( $this->active_lists ) % 3 ) {
+				case 2:
+					$item .= '○ ';
+					break;
+
+				case 0:
+					$item .= '■ ';
+					break;
+
+				default:
+					$item .= '• ';
+					break;
+			}
+		} else {
+			switch ( count( $this->active_lists ) % 3 ) {
+				case 2:
+					$item .= $this->number_to_alphabet( end( $this->list_tally ) ) . '. ';
+					break;
+
+				case 0:
+					$item .= $this->number_to_roman_numeral( end( $this->list_tally ) ) . '. ';
+					break;
+
+				default:
+					$item .= end( $this->list_tally ) . '. ';
+					break;
+			}
+		}
+
+		$text = preg_replace( $regex, '', $element ) . "\n";
+
+		$text = $this->link_formatter( $text );
+
+		$text = $this->rich_text_formatter( $text );
+
+		$item .= $text;
+
+		$this->list_str .= $item;
+	}
+
+	/**
+	 * Image formatter
+	 *
+	 * @param string $element The element that is having the image format applied
+	 * @return string The formatted element
+	 */
+	public function image_format( $element ) {
+		preg_match( '/wp-image-\d*/m', $element, $image_id_class );
+
+		$image_id  = intval( str_replace( 'wp-image-', '', $image_id_class[0] ), 10 );
+		$image_url = wp_get_attachment_image_src( $image_id, 'medium' );
+
+		$alt_text = explode( '"', explode( 'alt="', $element )[1] )[0];
+
+		$block_content = [
+			'type'      => 'image',
+			'image_url' => $image_url,
+			'alt_text'  => $alt_text,
+		];
+
+		return $block_content;
+	}
+
+	/**
 	 * Convert the post content into sections for the slack api
 	 *
 	 * @param string $element The element that is being converted into the content
@@ -165,101 +300,18 @@ class ReleasePublish {
 	 */
 	public function format_content( $element ) {
 		if ( str_contains( $element, '<h' ) ) {
-			$regex = '/<\/?h\d>/m';
-			$text  = preg_replace( $regex, '', $element );
-
-			if ( str_contains( $text, '<a' ) ) {
-				$text = preg_replace( '/<\/?a.*?>/m', '', $text );
-			}
-
-			$text = preg_replace( '/<\/?s>/m', '', $text );
-			$text = preg_replace( '/<\/?strong>/m', '', $text );
-			$text = preg_replace( '/<\/?em>/m', '', $text );
-			$text = preg_replace( '/<\/?code>/m', '', $text );
-
-			$block_content = [
-				'type' => 'header',
-				'text' => [
-					'type' => 'plain_text',
-					'text' => $text,
-				],
-			];
-
-			return $block_content;
+			return $this->header_format( $element );
 
 		} elseif ( str_contains( $element, '<p' ) ) {
-			$regex = '/<\/?p>/m';
-			$text  = preg_replace( $regex, '', $element );
-
-			if ( 0 === strlen( $text ) ) {
-				return;
-			}
-
-			$text = $this->link_formatter( $text );
-
-			$text = $this->rich_text_formatter( $text );
-
-			$block_content = [
-				'type' => 'section',
-				'text' => [
-					'type' => 'mrkdwn',
-					'text' => $text,
-				],
-			];
-
-			return $block_content;
+			return $this->paragraph_format( $element );
 
 		} elseif ( str_contains( $element, '<ul' ) || str_contains( $element, '<ol' ) ) {
 			array_push( $this->active_lists, $element );
 			array_push( $this->list_tally, 0 );
 
-			return;
+			return null;
 		} elseif ( str_contains( $element, '<li' ) ) {
-			$this->list_tally[ count( $this->list_tally ) - 1 ] = end( $this->list_tally ) + 1;
-
-			$item = str_repeat( '      ', count( $this->active_lists ) - 1 );
-
-			$regex = '/<\/?li>/m';
-
-			if ( str_contains( end( $this->active_lists ), '<ul' ) ) {
-				switch ( count( $this->active_lists ) % 3 ) {
-					case 2:
-						$item .= '○ ';
-						break;
-
-					case 0:
-						$item .= '■ ';
-						break;
-
-					default:
-						$item .= '• ';
-						break;
-				}
-			} else {
-				switch ( count( $this->active_lists ) % 3 ) {
-					case 2:
-						$item .= $this->number_to_alphabet( end( $this->list_tally ) ) . '. ';
-						break;
-
-					case 0:
-						$item .= $this->number_to_roman_numeral( end( $this->list_tally ) ) . '. ';
-						break;
-
-					default:
-						$item .= end( $this->list_tally ) . '. ';
-						break;
-				}
-			}
-
-			$text = preg_replace( $regex, '', $element ) . "\n";
-
-			$text = $this->link_formatter( $text );
-
-			$text = $this->rich_text_formatter( $text );
-
-			$item .= $text;
-
-			$this->list_str .= $item;
+			$this->list_item_format( $element );
 		} elseif ( str_contains( $element, '</ul' ) || str_contains( $element, '</ol' ) ) {
 			array_pop( $this->active_lists );
 			array_pop( $this->list_tally );
@@ -278,21 +330,9 @@ class ReleasePublish {
 
 			}
 		} elseif ( str_contains( $element, '<img' ) ) {
-			preg_match( '/wp-image-\d*/m', $element, $image_id_class );
-
-			$image_id  = intval( str_replace( 'wp-image-', '', $image_id_class[0] ), 10 );
-			$image_url = wp_get_attachment_image_src( $image_id, 'medium' );
-
-			$alt_text = explode( '"', explode( 'alt="', $element )[1] )[0];
-
-			$block_content = [
-				'type'      => 'image',
-				'image_url' => $image_url,
-				'alt_text'  => $alt_text,
-			];
-
-			return $block_content;
+			return $this->image_format( $element );
 		}
+		return null;
 	}
 
 	/**
