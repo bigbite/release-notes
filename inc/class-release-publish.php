@@ -299,16 +299,15 @@ class ReleasePublish {
 	 * @return string The formatted element
 	 */
 	public function image_format( $element ) {
-		preg_match( '/wp-image-\d*/m', $element, $image_id_class );
+		preg_match('/src\s*=\s*"(.+?)"/', $element, $regex_url_result);
+		$img_url = $regex_url_result[1];
 
-		$image_id  = intval( str_replace( 'wp-image-', '', $image_id_class[0] ), 10 );
-		$image_url = wp_get_attachment_image_src( $image_id, 'medium' );
-
-		$alt_text = explode( '"', explode( 'alt="', $element )[1] )[0];
+		preg_match('/alt=([\'"])(.*?)\1/', $element, $regex_alt_result);
+		$alt_text = $regex_alt_result[2];
 
 		$block_content = [
 			'type'      => 'image',
-			'image_url' => $image_url,
+			'image_url' => $img_url,
 			'alt_text'  => $alt_text,
 		];
 
