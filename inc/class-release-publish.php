@@ -2,6 +2,8 @@
 
 namespace Big_Bite\Release_Notes;
 
+use stdClass;
+
 /**
  * Slack Notifications.
  */
@@ -97,6 +99,107 @@ class ReleasePublish {
 	}
 
 	/**
+	 * Get the elements that need styles applied
+	 *
+	 * @param string $element The text to get split
+	 * @return array An array of the strings that need styles
+	 */
+	public function get_elements( string $raw ) {
+		$raw_array = array_filter( wp_html_split( $raw ) );
+
+		$tag_stack = [];
+		$elements  = [];
+
+		foreach ( $raw_array as $substr ) {
+			// substring is an opening tag
+			if ( 1 === preg_match( '/<[a-zA-Z-_]{1,}>/', $substr ) ) {
+				$tag_stack[] = trim( $substr, '<>' );
+				continue;
+			}
+
+			// substring is a closing tag
+			if ( 1 === preg_match( '/<\/[a-zA-Z-_]{1,}>/', $substr ) ) {
+				array_pop( $tag_stack );
+				continue;
+			}
+
+			$elements[] = [
+				'style' => $tag_stack,
+				'text'  => $substr,
+			];
+		}
+
+		return $elements;
+	}
+
+	/**
+	 * Get the styles array for the text
+	 *
+	 * @param array $styles the element's style tag list
+	 *
+	 * @return string The styles array
+	 */
+	public function get_styles( array $styles ) {
+		$arr = [
+			'italic' => false,
+			'bold'   => false,
+			'strike' => false,
+			'code'   => false,
+		];
+
+		foreach ( $styles as $style ) {
+			switch ($style) {
+				case 'em':
+					$arr['italic'] = true;
+					break;
+
+				case 'strong':
+					$arr['bold'] = true;
+					break;
+
+				case 's':
+					$arr['strike'] = true;
+					break;
+
+				case 'code':
+					$arr['code'] = true;
+					break;
+
+				default:
+					break;
+			}
+		}
+
+		return $arr;
+	}
+
+	public function format_rich_text( string $raw_element ) {
+		$elements_arr = $this->get_elements( $raw_element );
+		$rich_text_block_arr = [];
+
+		foreach ( $elements_arr as $element ) {
+			$styles = $this->get_styles( $element['style'] );
+
+			if ( in_array( 'link', $element['style'] ) ) {
+				$rich_text_block_arr[] = [
+					'type'  => 'link',
+					'url'   => explode( '|', $element['text'] )[0],
+					'text'  => explode( '|', $element['text'] )[1],
+					'style' => $styles,
+				];
+			} else {
+				$rich_text_block_arr[] = [
+					'type'  => 'text',
+					'text'  => $element['text'],
+					'style' => $styles,
+				];
+			}
+		}
+
+		return $rich_text_block_arr;
+	}
+
+	/**
 	 * Replace the html link with the Slack Markdown link
 	 *
 	 * @param string $text The string that contains a link to be converted from html to Slack markdown
@@ -115,7 +218,7 @@ class ReleasePublish {
 
 			$link_text = preg_replace( '/<\/?a.*?>/m', '', $anchor[0] );
 
-			$text = str_replace( $anchor[0], '<' . $link . '|' . $link_text . '>', $text );
+			$text = str_replace( $anchor[0], '<link>' . $link . '|' . $link_text  . '</link>', $text );
 		}
 
 		return $text;
@@ -203,13 +306,15 @@ class ReleasePublish {
 
 		$text = $this->link_formatter( $text );
 
-		$text = $this->rich_text_formatter( $text );
+		$text = $this->format_rich_text( $text );
 
 		$block_content = [
-			'type' => 'section',
-			'text' => [
-				'type' => 'mrkdwn',
-				'text' => $text,
+			'type' => 'rich_text',
+			'elements' => [
+				[
+					'type' => 'rich_text_section',
+					'elements' => $text
+				]
 			],
 		];
 
