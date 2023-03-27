@@ -17,73 +17,6 @@ class ReleasePublish {
 	}
 
 	/**
-	 * Convert a number into roman numerals for the lists
-	 *
-	 * @param int $number The number to be changed to a roman numeral
-	 * @return string The roman numeral convertion for the number provided
-	 */
-	public function number_to_roman_numeral( int $number ) {
-		$map          = [
-			'm'  => 1000,
-			'cm' => 900,
-			'd'  => 500,
-			'cd' => 400,
-			'c'  => 100,
-			'xc' => 90,
-			'l'  => 50,
-			'xl' => 40,
-			'x'  => 10,
-			'ix' => 9,
-			'v'  => 5,
-			'iv' => 4,
-			'i'  => 1,
-		];
-		$return_value = '';
-		while ( $number > 0 ) {
-			foreach ( $map as $roman => $int ) {
-				if ( $number >= $int ) {
-					$number       -= $int;
-					$return_value .= $roman;
-					break;
-				}
-			}
-		}
-		return $return_value;
-	}
-
-	/**
-	 * Convert a number into the respective letter for the lists
-	 * e.g. 2 = b, 28 = ab
-	 *
-	 * @param int $count The number to be changed into letters
-	 * @return string The alphabetic index conversion for the number provided
-	 */
-	public function number_to_alphabet( int $count ) {
-		$alphabet = 'abcdefghijklmnopqrstuvwxyz';
-
-		$length = strlen( $alphabet );
-
-		if ( $count <= $length ) {
-			return substr( $alphabet, $count - 1, 1 );
-		}
-
-		$pos = intval( floor( $count / $length ), 10 );
-		$rem = $count % $length;
-
-		if ( 0 === $rem ) {
-			return substr( $alphabet, $pos - 2, 1 ) . substr( $alphabet, $length - 1, 1 );
-		}
-
-		$bullet = substr( $alphabet, $pos - 1, 1 );
-
-		if ( $rem > 0 ) {
-			$bullet .= substr( $alphabet, $rem - 1, 1 );
-		}
-
-		return $bullet;
-	}
-
-	/**
 	 * Replace the html rich text formats with markdown formats
 	 *
 	 * @param string $text The string to have html rich text formats changed into markdown
@@ -247,18 +180,11 @@ class ReleasePublish {
 	protected $active_lists = [];
 
 	/**
-	 * An array of the number of current items in each level of a list
+	 * An array of the formatted list items
 	 *
 	 * @var array
 	 */
-	protected $list_tally = [];
-
-	/**
-	 * The string for the final list
-	 *
-	 * @var string
-	 */
-	protected $list_str = '';
+	protected $list_elements = [];
 
 	/**
 	 * Header formatter
@@ -327,51 +253,31 @@ class ReleasePublish {
 	 * @param string $element The element that is having the list item format applied
 	 */
 	public function list_item_format( $element ) {
-		$this->list_tally[ count( $this->list_tally ) - 1 ] = end( $this->list_tally ) + 1;
-
-		$item = str_repeat( '      ', count( $this->active_lists ) - 1 );
-
 		$regex = '/<\/?li>/m';
-
-		if ( str_contains( end( $this->active_lists ), '<ul' ) ) {
-			switch ( count( $this->active_lists ) % 3 ) {
-				case 2:
-					$item .= '○ ';
-					break;
-
-				case 0:
-					$item .= '■ ';
-					break;
-
-				default:
-					$item .= '• ';
-					break;
-			}
-		} else {
-			switch ( count( $this->active_lists ) % 3 ) {
-				case 2:
-					$item .= $this->number_to_alphabet( end( $this->list_tally ) ) . '. ';
-					break;
-
-				case 0:
-					$item .= $this->number_to_roman_numeral( end( $this->list_tally ) ) . '. ';
-					break;
-
-				default:
-					$item .= end( $this->list_tally ) . '. ';
-					break;
-			}
-		}
-
 		$text = preg_replace( $regex, '', $element ) . "\n";
+
+		if ( 0 === strlen( $text ) ) {
+			return;
+		}
 
 		$text = $this->link_formatter( $text );
 
-		$text = $this->rich_text_formatter( $text );
+		$text = $this->format_rich_text( $text );
 
-		$item .= $text;
+		$item = [
+			'type'     => 'rich_text_list',
+			'elements' => [
+				[
+					'type'     => 'rich_text_section',
+					'elements' => $text
+				]
+			],
+			'style'  => str_contains( end( $this->active_lists ), '<ul' ) ? 'bullet' : 'ordered',
+			'indent' => count( $this->active_lists ) - 1
+		];
 
-		$this->list_str .= $item;
+		$this->list_elements[] = $item;
+		return;
 	}
 
 	/**
@@ -412,25 +318,28 @@ class ReleasePublish {
 
 		} elseif ( str_contains( $element, '<ul' ) || str_contains( $element, '<ol' ) ) {
 			array_push( $this->active_lists, $element );
-			array_push( $this->list_tally, 0 );
 
 			return null;
 		} elseif ( str_contains( $element, '<li' ) ) {
 			$this->list_item_format( $element );
 		} elseif ( str_contains( $element, '</ul' ) || str_contains( $element, '</ol' ) ) {
 			array_pop( $this->active_lists );
-			array_pop( $this->list_tally );
 
 			if ( 0 === count( $this->active_lists ) ) {
 				$block_content = [
-					'type' => 'section',
-					'text' => [
-						'type' => 'mrkdwn',
-						'text' => $this->list_str,
-					],
+					'type' => 'rich_text',
+					'elements' => $this->list_elements,
 				];
 
-				$this->list_str = '';
+				// $block_content = [
+				// 	'type' => 'section',
+				// 	'text' => [
+				// 		'type' => 'mrkdwn',
+				// 		'text' => json_encode( $this->list_elements )
+				// 	]
+				// ];
+
+				$this->list_elements = [];
 				return $block_content;
 
 			}
