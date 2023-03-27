@@ -20,6 +20,7 @@ class ReleasePublish {
 	 * Replace the html rich text formats with markdown formats
 	 *
 	 * @param string $text The string to have html rich text formats changed into markdown
+	 *
 	 * @return string The text with the correct markdown elements
 	 */
 	public function rich_text_formatter( string $text ) {
@@ -34,7 +35,8 @@ class ReleasePublish {
 	/**
 	 * Get the elements that need styles applied
 	 *
-	 * @param string $element The text to get split
+	 * @param string $raw The text to get split
+	 *
 	 * @return array An array of the strings that need styles
 	 */
 	public function get_elements( string $raw ) {
@@ -81,7 +83,7 @@ class ReleasePublish {
 		];
 
 		foreach ( $styles as $style ) {
-			switch ($style) {
+			switch ( $style ) {
 				case 'em':
 					$arr['italic'] = true;
 					break;
@@ -106,8 +108,15 @@ class ReleasePublish {
 		return $arr;
 	}
 
+	/**
+	 * Creates the rich text elements from the given strings
+	 *
+	 * @param string $raw_element The raw string element
+	 *
+	 * @return array A list of all the formatted elements
+	 */
 	public function format_rich_text( string $raw_element ) {
-		$elements_arr = $this->get_elements( $raw_element );
+		$elements_arr        = $this->get_elements( $raw_element );
 		$rich_text_block_arr = [];
 
 		foreach ( $elements_arr as $element ) {
@@ -136,6 +145,7 @@ class ReleasePublish {
 	 * Replace the html link with the Slack Markdown link
 	 *
 	 * @param string $text The string that contains a link to be converted from html to Slack markdown
+	 *
 	 * @return string The link in the slack markdown format
 	 */
 	public function link_formatter( string $text ) {
@@ -151,7 +161,7 @@ class ReleasePublish {
 
 			$link_text = preg_replace( '/<\/?a.*?>/m', '', $anchor[0] );
 
-			$text = str_replace( $anchor[0], '<link>' . $link . '|' . $link_text  . '</link>', $text );
+			$text = str_replace( $anchor[0], '<link>' . $link . '|' . $link_text . '</link>', $text );
 		}
 
 		return $text;
@@ -190,6 +200,7 @@ class ReleasePublish {
 	 * Header formatter
 	 *
 	 * @param string $element The element that is having the header format applied
+	 *
 	 * @return string The formatted element
 	 */
 	public function header_format( $element ) {
@@ -220,6 +231,7 @@ class ReleasePublish {
 	 * Paragraph formatter
 	 *
 	 * @param string $element The element that is having the paragraph format applied
+	 *
 	 * @return string The formatted element
 	 */
 	public function paragraph_format( $element ) {
@@ -235,12 +247,12 @@ class ReleasePublish {
 		$text = $this->format_rich_text( $text );
 
 		$block_content = [
-			'type' => 'rich_text',
+			'type'     => 'rich_text',
 			'elements' => [
 				[
-					'type' => 'rich_text_section',
-					'elements' => $text
-				]
+					'type'     => 'rich_text_section',
+					'elements' => $text,
+				],
 			],
 		];
 
@@ -254,7 +266,7 @@ class ReleasePublish {
 	 */
 	public function list_item_format( $element ) {
 		$regex = '/<\/?li>/m';
-		$text = preg_replace( $regex, '', $element ) . "\n";
+		$text  = preg_replace( $regex, '', $element );
 
 		if ( 0 === strlen( $text ) ) {
 			return;
@@ -269,21 +281,21 @@ class ReleasePublish {
 			'elements' => [
 				[
 					'type'     => 'rich_text_section',
-					'elements' => $text
-				]
+					'elements' => $text,
+				],
 			],
-			'style'  => str_contains( end( $this->active_lists ), '<ul' ) ? 'bullet' : 'ordered',
-			'indent' => count( $this->active_lists ) - 1
+			'style'    => str_contains( end( $this->active_lists ), '<ul' ) ? 'bullet' : 'ordered',
+			'indent'   => count( $this->active_lists ) - 1,
 		];
 
 		$this->list_elements[] = $item;
-		return;
 	}
 
 	/**
 	 * Image formatter
 	 *
 	 * @param string $element The element that is having the image format applied
+	 *
 	 * @return string The formatted element
 	 */
 	public function image_format( $element ) {
@@ -307,6 +319,7 @@ class ReleasePublish {
 	 * Convert the post content into sections for the slack api
 	 *
 	 * @param string $element The element that is being converted into the content
+	 *
 	 * @return string|null The array to be added to the blocks array or null
 	 */
 	public function format_content( $element ) {
@@ -327,17 +340,9 @@ class ReleasePublish {
 
 			if ( 0 === count( $this->active_lists ) ) {
 				$block_content = [
-					'type' => 'rich_text',
+					'type'     => 'rich_text',
 					'elements' => $this->list_elements,
 				];
-
-				// $block_content = [
-				// 	'type' => 'section',
-				// 	'text' => [
-				// 		'type' => 'mrkdwn',
-				// 		'text' => json_encode( $this->list_elements )
-				// 	]
-				// ];
 
 				$this->list_elements = [];
 				return $block_content;
