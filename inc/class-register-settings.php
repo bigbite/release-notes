@@ -60,6 +60,7 @@ class RegisterSettings {
 		register_setting(
 			'bb_release_notes_settings',
 			'bb_release_notes_settings',
+			[]
 		);
 		add_settings_section(
 			'section_one',
