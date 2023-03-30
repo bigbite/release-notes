@@ -9,6 +9,20 @@ use stdClass;
  */
 class ReleasePublish {
 	/**
+	 * An array of active lists
+	 *
+	 * @var array
+	 */
+	protected $active_lists = [];
+
+	/**
+	 * An array of the formatted list items
+	 *
+	 * @var array
+	 */
+	protected $list_elements = [];
+
+	/**
 	 * Constructor.
 	 */
 	public function __construct() {
@@ -181,20 +195,6 @@ class ReleasePublish {
 
 		wp_schedule_single_event( time(), 'test_scheduled_event', [ $post->ID ] );
 	}
-
-	/**
-	 * An array of active lists
-	 *
-	 * @var array
-	 */
-	protected $active_lists = [];
-
-	/**
-	 * An array of the formatted list items
-	 *
-	 * @var array
-	 */
-	protected $list_elements = [];
 
 	/**
 	 * Header formatter
@@ -389,14 +389,21 @@ class ReleasePublish {
 				'type' => 'section',
 				'text' => [
 					'type' => 'plain_text',
-					'text' => __( 'Version: ', 'release-notes' ) . get_post_meta( $id, 'version', true ),
+					'text' => sprintf(
+						__( 'Version: %s', 'release-notes' ),
+						get_post_meta( $id, 'version', true )
+				),
 				],
 			],
 			[
 				'type' => 'section',
 				'text' => [
 					'type' => 'mrkdwn',
-					'text' => __( 'View all details <https://release-notes.bigbite.site/wp-admin/admin.php?page=release-notes&release-id=', 'release-notes' ) . $post->ID . __( '|here>', 'release-notes' ),
+					'text' => sprintf(
+						__( 'View all details <%s/wp-admin/admin.php?page=release-notes&release-id=%s|here>', 'release-notes' ),
+						site_url(),
+						$post->ID,
+					),
 				],
 			],
 			[
