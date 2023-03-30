@@ -2,12 +2,11 @@
 
 namespace Big_Bite\Release_Notes;
 
-use stdClass;
-
 /**
  * Slack Notifications.
  */
 class ReleasePublish {
+
 	/**
 	 * An array of active lists
 	 *
@@ -299,10 +298,10 @@ class ReleasePublish {
 	 * @return string The formatted element
 	 */
 	public function image_format( $element ) {
-		preg_match('/src\s*=\s*"(.+?)"/', $element, $regex_url_result);
+		preg_match( '/src\s*=\s*"(.+?)"/', $element, $regex_url_result );
 		$img_url = $regex_url_result[1];
 
-		preg_match('/alt=([\'"])(.*?)\1/', $element, $regex_alt_result);
+		preg_match( '/alt=([\'"])(.*?)\1/', $element, $regex_alt_result );
 		$alt_text = $regex_alt_result[2];
 
 		$block_content = [
@@ -390,9 +389,10 @@ class ReleasePublish {
 				'text' => [
 					'type' => 'plain_text',
 					'text' => sprintf(
+						/* translators: %s: The version number. */
 						__( 'Version: %s', 'release-notes' ),
 						get_post_meta( $id, 'version', true )
-				),
+					),
 				],
 			],
 			[
@@ -400,7 +400,8 @@ class ReleasePublish {
 				'text' => [
 					'type' => 'mrkdwn',
 					'text' => sprintf(
-						__( 'View all details <%s/wp-admin/admin.php?page=release-notes&release-id=%s|here>', 'release-notes' ),
+						/* translators: %s: The post ID. */
+						__( 'View all details <%1$s/wp-admin/admin.php?page=release-notes&release-id=%2$s|here>', 'release-notes' ),
 						site_url(),
 						$post->ID,
 					),
