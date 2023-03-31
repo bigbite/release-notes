@@ -1,6 +1,6 @@
 <?php
 
-use Big_Bite\release_notes\ReleaseNote;
+use Big_Bite\Release_Notes\ReleaseNote;
 
 $current_page = isset( $_GET['paged'] ) ? max( 1, intval( $_GET['paged'], 10 ) ) : 1; // phpcs:ignore
 
@@ -46,9 +46,9 @@ if ( 1 !== $current_page ) {
 	return;
 }
 
-$latest = Big_Bite\release_notes\ReleaseNote::get_latest();
+$latest = Big_Bite\Release_Notes\ReleaseNote::get_latest();
 
 if ( $latest ) {
-	Big_Bite\release_notes\ReleaseNote::set_viewed( $latest->ID );
+	Big_Bite\Release_Notes\ReleaseNote::set_viewed( $latest->ID );
 }
 ?>

@@ -12,7 +12,7 @@
  * Text Domain:       
  */
 
-namespace Big_Bite\release_notes;
+namespace Big_Bite\Release_Notes;
 
 // Exit if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {

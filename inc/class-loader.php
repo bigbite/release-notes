@@ -1,13 +1,13 @@
 <?php
 
-namespace Big_Bite\release_notes;
+namespace Big_Bite\Release_Notes;
 
 /**
  * Loader for handling assets.
  */
 class Loader {
-	const SCRIPT_NAME = 'release-notes-script';
-	const STYLE_NAME  = 'release-notes-style';
+	protected const SCRIPT_NAME = 'release-notes-script';
+	protected const STYLE_NAME  = 'release-notes-style';
 
 	/**
 	 * Initialise the hooks and filters.
@@ -23,7 +23,7 @@ class Loader {
 	 *
 	 * @return void
 	 */
-	public function enqueue_block_editor_assets() : void {
+	public function enqueue_block_editor_assets(): void {
 		$plugin_name = basename( RELEASE_NOTES_DIR );
 
 		wp_enqueue_script(
