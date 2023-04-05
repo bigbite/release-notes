@@ -203,7 +203,7 @@ class ReleasePublish {
 	 * @return string The formatted element
 	 */
 	public function header_format( $element ) {
-		$regex = '/<\/?h\d>/m';
+		$regex = '/<\/?h\d.*?>/m';
 		$text  = preg_replace( $regex, '', $element );
 
 		if ( str_contains( $text, '<a' ) ) {
