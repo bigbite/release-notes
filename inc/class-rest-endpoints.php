@@ -54,7 +54,7 @@ class RestEndpoints {
 			return;
 		}
 
-		$converter = new \League\CommonMark\GithubFlavoredMarkdownConverter([
+		$converter = new GithubFlavoredMarkdownConverter([
 			'html_input'         => 'strip',
 			'allow_unsafe_links' => false,
 		]);
