@@ -27,16 +27,6 @@ class ReleaseNote {
 	}
 
 	/**
-	 * Get latest release note version.
-	 *
-	 * @return string
-	 */
-	public static function get_latest_version(): string {
-		$latest = self::get_latest();
-		return get_post_meta( $latest->ID, 'version', true );
-	}
-
-	/**
 	 * Check if the user has already seen this release.
 	 *
 	 * @param int      $id - release id.
