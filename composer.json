@@ -11,7 +11,7 @@
     ],
     "require": {
       "automattic/jetpack-autoloader": "^2.10.1",
-        "league/commonmark": "^2.3"
+      "league/commonmark": "^2.3"
     },
     "require-dev": {
       "bigbite/phpcs-config": "dev-main"
