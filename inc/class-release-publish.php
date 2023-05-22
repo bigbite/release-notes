@@ -37,10 +37,10 @@ class ReleasePublish {
 	 * @return string The text with the correct markdown elements
 	 */
 	public function rich_text_formatter( string $text ) {
-		$text = preg_replace( '/<\/?s>/m', '~', $text );
-		$text = preg_replace( '/<\/?strong>/m', '*', $text );
-		$text = preg_replace( '/<\/?em>/m', '_', $text );
-		$text = preg_replace( '/<\/?code>/m', '`', $text );
+		$text = preg_replace( '/<\/?s.*?>/m', '~', $text );
+		$text = preg_replace( '/<\/?strong.*?>/m', '*', $text );
+		$text = preg_replace( '/<\/?em.*?>/m', '_', $text );
+		$text = preg_replace( '/<\/?code.*?>/m', '`', $text );
 
 		return $text;
 	}
@@ -210,10 +210,10 @@ class ReleasePublish {
 			$text = preg_replace( '/<\/?a.*?>/m', '', $text );
 		}
 
-		$text = preg_replace( '/<\/?s>/m', '', $text );
-		$text = preg_replace( '/<\/?strong>/m', '', $text );
-		$text = preg_replace( '/<\/?em>/m', '', $text );
-		$text = preg_replace( '/<\/?code>/m', '', $text );
+		$text = preg_replace( '/<\/?s.*?>/m', '', $text );
+		$text = preg_replace( '/<\/?strong.*?>/m', '', $text );
+		$text = preg_replace( '/<\/?em.*?>/m', '', $text );
+		$text = preg_replace( '/<\/?code.*?>/m', '', $text );
 
 		$block_content = [
 			'type' => 'header',
@@ -234,7 +234,7 @@ class ReleasePublish {
 	 * @return string The formatted element
 	 */
 	public function paragraph_format( $element ) {
-		$regex = '/<\/?p>/m';
+		$regex = '/<\/?p.*?>/m';
 		$text  = preg_replace( $regex, '', $element );
 
 		if ( 0 === strlen( $text ) ) {
@@ -264,7 +264,7 @@ class ReleasePublish {
 	 * @param string $element The element that is having the list item format applied
 	 */
 	public function list_item_format( $element ) {
-		$regex = '/<\/?li>/m';
+		$regex = '/<\/?li.*?>/m';
 		$text  = preg_replace( $regex, '', $element );
 
 		if ( 0 === strlen( $text ) ) {
