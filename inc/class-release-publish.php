@@ -368,6 +368,7 @@ class ReleasePublish {
 		$post = get_post( $id );
 
 		$post_content = $post->post_content;
+		$post_content = preg_replace( '/<\/?div.*?>/m', '', $post_content );
 
 		$content = str_replace( "\n\n", "\n", preg_replace( '/<!--.*-->/m', '', $post_content ) );
 
