@@ -13,12 +13,12 @@ When installing to your site, add the following to you `composer.json` file. Thi
     }
   ],
   "require": {
-    "big-bite/release-notes": "1.0.0-rc.5"
+    "big-bite/release-notes": "1.0.0-rc.6"
   },
   "extra": {
     "installer-paths": {
-      "plugins/{$name}/": [
-        "type:wordpress-plugin"
+      "mu-plugins/{$name}/": [
+        "type:wordpress-muplugin"
       ]
     }
   }

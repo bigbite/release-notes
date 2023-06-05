@@ -1,15 +1,15 @@
 <?php
 /**
  * Plugin Name:       Release Notes
- * Description:       
- * Version:           1.0.0-rc.5
+ * Description:
+ * Version:           1.0.0-rc.6
  * Requires at least: 5.5
  * Requires PHP:      7.4
  * Author:            Big Bite
  * License:           GPL v2 or later
  * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
  * Update URI:        https://example.com/my-plugin/
- * Text Domain:       
+ * Text Domain:
  */
 
 namespace Big_Bite\Release_Notes;
