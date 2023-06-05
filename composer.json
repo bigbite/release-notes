@@ -1,7 +1,7 @@
 {
-    "name": "bigbite/release-notes",
+    "name": "big-bite/release-notes",
     "description": "",
-    "type": "wordpress-clientmuplugin",
+    "type": "wordpress-plugin",
     "repositories": [
       {
           "url": "git@github.com:bigbite/phpcs-config.git",
