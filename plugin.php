@@ -2,7 +2,7 @@
 /**
  * Plugin Name:       Release Notes
  * Description:       
- * Version:           1.0.0-alpha.1
+ * Version:           1.0.0-rc.5
  * Requires at least: 5.5
  * Requires PHP:      7.4
  * Author:            Big Bite
