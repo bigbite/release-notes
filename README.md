@@ -13,7 +13,7 @@ When installing to your site, add the following to you `composer.json` file. Thi
     }
   ],
   "require": {
-    "@big-bite/release-notes": "dev-main-built"
+    "big-bite/release-notes": "1.0.0-rc.5"
   },
   "extra": {
     "installer-paths": {
