@@ -17,8 +17,8 @@ When installing to your site, add the following to you `composer.json` file. Thi
   },
   "extra": {
     "installer-paths": {
-      "mu-plugins/{$name}/": [
-        "type:wordpress-muplugin"
+      "plugins/{$name}/": [
+        "type:wordpress-plugin"
       ]
     }
   }

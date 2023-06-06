@@ -1,7 +1,7 @@
 {
     "name": "bigbite/release-notes",
     "description": "",
-    "type": "wordpress-muplugin",
+    "type": "wordpress-plugin",
     "repositories": [
       {
           "url": "git@github.com:bigbite/phpcs-config.git",
