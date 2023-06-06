@@ -4,27 +4,27 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "1d36fcaf4111c0a7dc2d324dad69c75f",
+    "content-hash": "dfdeeb1769808d01142c0e9f20ed5e27",
     "packages": [
         {
             "name": "automattic/jetpack-autoloader",
-            "version": "v2.11.20",
+            "version": "v2.11.21",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Automattic/jetpack-autoloader.git",
-                "reference": "6067cbfb8d42d57a1fcf7bd11c7f20f80fe75db7"
+                "reference": "3a01a4a4ac166eaa721438cc06daa3cca0d51a15"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Automattic/jetpack-autoloader/zipball/6067cbfb8d42d57a1fcf7bd11c7f20f80fe75db7",
-                "reference": "6067cbfb8d42d57a1fcf7bd11c7f20f80fe75db7",
+                "url": "https://api.github.com/repos/Automattic/jetpack-autoloader/zipball/3a01a4a4ac166eaa721438cc06daa3cca0d51a15",
+                "reference": "3a01a4a4ac166eaa721438cc06daa3cca0d51a15",
                 "shasum": ""
             },
             "require": {
                 "composer-plugin-api": "^1.1 || ^2.0"
             },
             "require-dev": {
-                "automattic/jetpack-changelogger": "^3.3.2",
+                "automattic/jetpack-changelogger": "^3.3.4",
                 "yoast/phpunit-polyfills": "1.0.4"
             },
             "type": "composer-plugin",
@@ -52,10 +52,18 @@
                 "GPL-2.0-or-later"
             ],
             "description": "Creates a custom autoloader for a plugin or theme.",
+            "keywords": [
+                "autoload",
+                "autoloader",
+                "composer",
+                "jetpack",
+                "plugin",
+                "wordpress"
+            ],
             "support": {
-                "source": "https://github.com/Automattic/jetpack-autoloader/tree/v2.11.20"
+                "source": "https://github.com/Automattic/jetpack-autoloader/tree/v2.11.21"
             },
-            "time": "2023-05-11T05:50:38+00:00"
+            "time": "2023-05-22T14:27:35+00:00"
         },
         {
             "name": "dflydev/dot-access-data",
@@ -729,12 +737,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/bigbite/phpcs-config.git",
-                "reference": "adefd69c6754a6dc25e9fe51baee73a090cef541"
+                "reference": "9dd8f7c3a6520cf43f2da0a56b6fd11bfb7ff058"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/bigbite/phpcs-config/zipball/adefd69c6754a6dc25e9fe51baee73a090cef541",
-                "reference": "adefd69c6754a6dc25e9fe51baee73a090cef541",
+                "url": "https://api.github.com/repos/bigbite/phpcs-config/zipball/9dd8f7c3a6520cf43f2da0a56b6fd11bfb7ff058",
+                "reference": "9dd8f7c3a6520cf43f2da0a56b6fd11bfb7ff058",
                 "shasum": ""
             },
             "require": {
@@ -817,7 +825,7 @@
                 "source": "https://github.com/bigbite/phpcs-config/tree/main",
                 "issues": "https://github.com/bigbite/phpcs-config/issues"
             },
-            "time": "2023-05-10T08:31:34+00:00"
+            "time": "2023-06-06T08:44:15+00:00"
         },
         {
             "name": "dealerdirect/phpcodesniffer-composer-installer",
