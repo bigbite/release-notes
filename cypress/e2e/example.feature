@@ -1,4 +1,10 @@
 Feature: Release notes page
-  Scenario: visiting the release notes page
-    When I visit the release notes page
-    Then I should see a release note
+
+Scenario: viewing the release notes page when no release notes exist
+  Given the user visits the release notes page
+  Then the placeholder message is visible
+
+Scenario: viewing published release notes on the release notes page
+  Given some release notes are published
+  When the user visits the release notes page
+  Then the latest release notes should be visible
