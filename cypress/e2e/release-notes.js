@@ -1,4 +1,4 @@
-import { Given, When } from "@badeball/cypress-cucumber-preprocessor";
+import { Given, When, Then } from "@badeball/cypress-cucumber-preprocessor";
 
 beforeEach(() => {
     cy.intercept({ method: 'POST', url: `/wp-json/wp/v2/release-note/*` }).as('releasePublished')
@@ -37,12 +37,14 @@ When("they proceed to publish the created note", () => {
         cy.contains("button", "Publish").click()
     })
     cy.saveCurrentPost()
-    cy.wait('@releasePublished')
-      .its('response.statusCode')
-      .should('eq', 200)
+    cy.wait("@releasePublished")
+      .its("response.statusCode")
+      .should("eq", 200)
 })
 
-// Then("they should see confirmirmation of a successful publication of the release note", () => {
-
-// })
+Then("they should see indications of a successful publication of the release note", () => {
+    cy.visit("wp-admin/admin.php?page=release-notes")
+    cy.get(".menupop.release-note").should("contain", "1.0.0")
+    cy.get(".release-note-version").should("contain", "1.0.0")
+})
 
