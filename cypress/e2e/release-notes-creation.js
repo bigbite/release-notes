@@ -4,11 +4,8 @@ beforeEach(() => {
     cy.intercept({ method: 'POST', url: `/wp-json/wp/v2/release-note/*` }).as('releasePublished')
 })
 
-Given("the Administrator is on the release notes page", () => {
-    cy.visit("/wp-admin/edit.php?post_type=release-note")
-})
-
 Given("an Administrator creates a new release note with provided updates", () => {
+    cy.visit("/wp-admin/edit.php?post_type=release-note")
     cy.get(".page-title-action").contains("Add New").click()
     cy.get(".wp-block-post-title").click().type("hello world")
     cy.get(".is-root-container").within(() => {
@@ -38,11 +35,11 @@ When("they proceed to publish the created note", () => {
     })
     cy.saveCurrentPost()
     cy.wait("@releasePublished")
-      .its("response.statusCode")
-      .should("eq", 200)
+        .its("response.statusCode")
+        .should("eq", 200)
 })
 
-Then("they should see indications of a successful publication of the release note", () => {
+Then("they should see indications of a successful publication", () => {
     cy.visit("wp-admin/admin.php?page=release-notes")
     cy.get(".menupop.release-note").should("contain", "1.0.0")
     cy.get(".release-note-version").should("contain", "1.0.0")
