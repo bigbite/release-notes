@@ -13,7 +13,8 @@
       "league/commonmark": "^2.3"
     },
     "require-dev": {
-      "bigbite/phpcs-config": "dev-main"
+      "bigbite/phpcs-config": "dev-main",
+        "phpunit/phpunit": "^9.6"
     },
     "autoload": {
       "files": [
@@ -27,7 +28,11 @@
       },
       "classmap": [ "inc/" ]
     },
-    "scripts": {},
+    "scripts": {
+      "phpunit": [
+        "@php vendor/bin/phpunit"
+      ]
+    },
     "config": {
         "preferred-install": "dist",
         "allow-plugins": {

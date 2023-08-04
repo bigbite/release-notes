@@ -4,3 +4,5 @@ dist/
 
 .DS_Store
 inc/asset-settings.php
+
+.phpunit.result.cache

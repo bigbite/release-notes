@@ -11,6 +11,11 @@ src
 .phpcs.xml.dist
 webpack.config.js
 
+# phpunit
+.phpunit.result.cache
+phpunit.xml.dist
+Tests
+
 # other
 .gitignore
 README.md
