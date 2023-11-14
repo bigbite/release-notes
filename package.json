@@ -13,18 +13,14 @@
     "watch:dev:all": "webpack --mode=development --watch --env=\"all-projects\"",
     "watch:prod": "webpack --mode=production --watch --env=\"project=$npm_config_project\"",
     "watch:prod:all": "webpack --mode=production --watch --env=\"all-projects\"",
-    "test:e2e": "wp-cypress start",
-    "lint:gherkin": "gherkin-lint"
+    "test:e2e": "wp-cypress start"
   },
   "dependencies": {
     "@bigbite/build-tools": "git+ssh://git@github.com:bigbite/build-tools.git#1.0.0-beta.6",
     "prop-types": "^15.7.0"
   },
   "devDependencies": {
-    "@badeball/cypress-cucumber-preprocessor": "^18.0.1",
-    "@bigbite/wp-cypress": "^0.13.0",
-    "@cypress/webpack-preprocessor": "^5.17.1",
-    "cypress": "^12.14.0",
-    "gherkin-lint": "^4.2.2"
+    "@bigbite/wp-cypress": "^0.13.1",
+    "cypress": "^12.14.0"
   }
 }
