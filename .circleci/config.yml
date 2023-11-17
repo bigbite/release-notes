@@ -1,7 +1,7 @@
 version: 2.1
 
 orbs:
-  project: 'bigbite/project@0.0.61'
+  project: 'bigbite/project@0.0.64'
 
 jobs:
   build:
@@ -17,8 +17,11 @@ jobs:
           path: './'
       - project/npm-build:
           path: './'
+      - project/wp-cypress-start:
+        host: 'project.client.co'
+        port: 3333
       - project/create-build
-      
+
 workflows:
   workflow:
     jobs:
