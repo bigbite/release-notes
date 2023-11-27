@@ -16,6 +16,5 @@ module.exports = defineConfig({
     uploadsPath: 'cypress/uploads',
     config: {},
     phpVersion: 8.1,
-    noDocker: true,
   },
 });
