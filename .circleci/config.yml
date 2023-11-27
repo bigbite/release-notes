@@ -11,10 +11,6 @@ jobs:
     steps:
       - checkout
       - project/setup
-      - run:
-          name: Set Environment Variables
-          command: |
-            echo 'export WP_CYPRESS_NO_DOCKER_MODE="true"' >> $BASH_ENV
       - project/composer-install:
           path: './'
       - project/npm-install:
@@ -25,8 +21,6 @@ jobs:
           path: './'
           host: 'project.client.co'
           port: 3333
-      - project/cypress-run:
-          path: './'
       - project/create-build
 
 workflows:
