@@ -1,33 +1,34 @@
 version: 2.1
 
-orbs:
-  project: 'bigbite/project@0.0.64'
-
 jobs:
-  build:
-    executor:
-      name: project/default
-      php: '8.0'
+  main:
+    docker:
+      - image: 'bigbite/ci-orb-project:php-7.4'
+      - image: 'cimg/mysql:8.0'
     steps:
       - checkout
-      - project/setup
-      - project/composer-install:
-          path: './'
-      - project/npm-install:
-          path: './'
-      - project/npm-build:
-          path: './'
-      - project/wp-cypress-start:
-          path: './'
-          host: 'project.client.co'
-          port: 3333
-      - project/create-build
+      - run: |
+          echo 'export NVM_DIR=$HOME/.nvm' >> $BASH_ENV
+          echo 'source $NVM_DIR/nvm.sh' >> $BASH_ENV
+      - run: npm ci
+      - run: |
+          echo 127.0.0.1 << parameters.host >> | tee -a /etc/hosts
+          sed -i 's/80/<< parameters.port >>/' /etc/apache2/ports.conf
+          sed -i 's/80/<< parameters.port >>/' /etc/apache2/sites-enabled/000-default.conf
+          service apache2 start
+          echo 'export WP_CYPRESS_WORKING_DIR="/var/www"' >> $BASH_ENV
+          echo 'export WP_CYPRESS_NO_DOCKER_MODE="true"' >> $BASH_ENV
+          echo 'export WP_CYPRESS_DB_HOST="127.0.0.1"' >> $BASH_ENV
+          echo 'export WP_CYPRESS_DB_NAME="circle_test"' >> $BASH_ENV
+          echo 'export WP_CYPRESS_DB_USER="root"' >> $BASH_ENV
+          echo 'export WP_CYPRESS_DB_PASS=""' >> $BASH_ENV
+      - run: npx wp-cypress start
+      - run: npx cypress run
 
 workflows:
   workflow:
     jobs:
       - build:
-          context: bigbite
           filters:
             branches:
               ignore: /^.*-built$/
