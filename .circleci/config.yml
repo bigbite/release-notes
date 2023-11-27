@@ -17,8 +17,14 @@ jobs:
           path: './'
       - project/npm-build:
           path: './'
+      - project/wp-cypress-start:
+          path: './'
+          host: 'project.client.co'
+          port: 3333
+      - project/cypress-run:
+          path: './'
       - project/create-build
-      
+
 workflows:
   workflow:
     jobs:
