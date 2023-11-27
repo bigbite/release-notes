@@ -11,7 +11,7 @@ jobs:
     steps:
       - checkout
       - project/setup
-       - run:
+      - run:
           name: Set Environment Variables
           command: |
             echo 'export WP_CYPRESS_NO_DOCKER_MODE
