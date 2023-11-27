@@ -28,7 +28,7 @@ jobs:
 workflows:
   workflow:
     jobs:
-      - build:
+      - main:
           filters:
             branches:
               ignore: /^.*-built$/
