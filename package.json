@@ -20,7 +20,7 @@
     "prop-types": "^15.7.0"
   },
   "devDependencies": {
-    "@bigbite/wp-cypress": "git+ssh://git@github.com:bigbite/wp-cypress.git#1.0.0-rc.5",
+    "@bigbite/wp-cypress": "git+ssh://git@github.com:bigbite/wp-cypress.git#v1.0.0-rc.5",
     "cypress": "^12.14.0"
   }
 }
