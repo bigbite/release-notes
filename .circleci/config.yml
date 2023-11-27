@@ -14,8 +14,7 @@ jobs:
       - run:
           name: Set Environment Variables
           command: |
-            echo 'export WP_CYPRESS_NO_DOCKER_MODE
-="true"' >> $BASH_ENV
+            echo 'export WP_CYPRESS_NO_DOCKER_MODE="true"' >> $BASH_ENV
       - project/composer-install:
           path: './'
       - project/npm-install:
