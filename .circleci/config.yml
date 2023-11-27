@@ -22,7 +22,7 @@ jobs:
           host: 'project.client.co'
           port: 3333
        - project/cypress-run:
-          path: "./"
+          path: './'
       - project/create-build
 
 workflows:
