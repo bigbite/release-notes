@@ -19,3 +19,13 @@ import './commands';
 
 // Alternatively you can use CommonJS syntax:
 // require('./commands')
+
+// Stop XHR requests being printed out in the console log when running tests
+// This makes for a cleaner console log of what is happening in the tests
+const app = window.top;
+if (!app.document.head.querySelector("[data-hide-command-log-request]")) {
+ const style = app.document.createElement("style");
+ style.innerHTML =".command-name-request, .command-name-xhr { display: none }";
+ style.setAttribute("data-hide-command-log-request", "");
+ app.document.head.appendChild(style); 
+}
