@@ -1,30 +1,20 @@
 /// <reference types="cypress" />
 
 const userRoles = [
-    {
-        'userRole': 'admin',
-    },
-    {
-        'userRole': 'editor',
-    },
-    {
-        'userRole': 'subscriber',
-    },
-    {
-        'userRole': 'contributor',
-    },
-    {
-        'userRole': 'author',
-    },
+    'admin',
+    'editor',
+    'subscriber',
+    'contributor',
+    'author',
 ]
 
 describe('All users can access the release notes page', () => {
 
     userRoles.forEach((role) => {
 
-        describe(`${role.userRole} accees`, () => {
+        describe(`${role} access`, () => {
             beforeEach(() => {
-                cy.switchUser(role.userRole);
+                cy.switchUser(role);
                 cy.visit('/admin/');
             })
         
