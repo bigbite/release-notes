@@ -35,7 +35,7 @@ describe('non admin users should not be able to access release notes post type',
 
             const roleLabel = role?.userRole ? role.userRole : role.userRole;
             const assertion = role?.isAllowed ? 'exist' : 'not.exist';
-            const assertionLabel = role?.isAllowed ? 'shold' : 'should not';
+            const assertionLabel = role?.isAllowed ? 'should' : 'should not';
             
         
             it(`${roleLabel} ${assertionLabel} be able to create release notes`, () => {
