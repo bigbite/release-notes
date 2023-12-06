@@ -71,6 +71,7 @@ class ReleaseNoteSeeder extends Seeder {
 			),
 			'post_meta' => [
 				'version' => $this->faker->numerify( '#.#.#' ),
+				'release_date' => date("Y-m-d", strtotime("Nov 10, 2023")),
 			]
 		]))->create(1);
 
@@ -89,7 +90,9 @@ class ReleaseNoteSeeder extends Seeder {
 			),
 			'post_meta' => [
 				'version' => $this->faker->numerify( '#.#.#' ),
-			]
+				'release_date' => date("Y-m-d", strtotime("Dec 12, 2023")),
+			],
+			
 		]))->create(1);
 	}
 }
