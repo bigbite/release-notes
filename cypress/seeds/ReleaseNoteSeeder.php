@@ -68,7 +68,7 @@ class ReleaseNoteSeeder extends Seeder {
 				$this->faker->realText( 40 ),
 				$this->faker->realText( 40 ),
 				$this->faker->realText( 40 ),
-				'1.6.0'
+				'1.5.0'
 			),
 			'post_meta' => [
 				'version' => '1.5.0',
