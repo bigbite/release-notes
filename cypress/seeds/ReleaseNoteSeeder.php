@@ -58,6 +58,7 @@ class ReleaseNoteSeeder extends Seeder {
 
 		( new Fixtures\Post([
 			'post_type' => 'release-note',
+			'post_date' => date("Y-m-d H:i:s", strtotime("Nov 10, 2023 15:01:10")),
 			'post_content' => sprintf(
 				$release_note_template,
 				$this->faker->realText( 100 ),
@@ -67,16 +68,17 @@ class ReleaseNoteSeeder extends Seeder {
 				$this->faker->realText( 40 ),
 				$this->faker->realText( 40 ),
 				$this->faker->realText( 40 ),
-				$this->faker->numerify( '#.#.#' )
+				'1.6.0'
 			),
 			'post_meta' => [
-				'version' => $this->faker->numerify( '#.#.#' ),
+				'version' => '1.5.0',
 				'release_date' => date("Y-m-d", strtotime("Nov 10, 2023")),
 			]
 		]))->create(1);
 
 		( new Fixtures\Post([
 			'post_type' => 'release-note',
+			'post_date' => date("Y-m-d H:i:s", strtotime("Dec 04, 2023 14:22:32")),
 			'post_content' => sprintf(
 				$release_note_template,
 				$this->faker->realText( 100 ),
@@ -86,11 +88,11 @@ class ReleaseNoteSeeder extends Seeder {
 				$this->faker->realText( 40 ),
 				$this->faker->realText( 40 ),
 				$this->faker->realText( 40 ),
-				$this->faker->numerify( '#.#.#' )
+				'1.6.0'
 			),
 			'post_meta' => [
-				'version' => $this->faker->numerify( '#.#.#' ),
-				'release_date' => date("Y-m-d", strtotime("Dec 12, 2023")),
+				'version' => '1.6.0',
+				'release_date' => date("Y-m-d", strtotime("Dec 04, 2023")),
 			],
 			
 		]))->create(1);
