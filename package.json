@@ -13,7 +13,7 @@
     "watch:dev:all": "webpack --mode=development --watch --env=\"all-projects\"",
     "watch:prod": "webpack --mode=production --watch --env=\"project=$npm_config_project\"",
     "watch:prod:all": "webpack --mode=production --watch --env=\"all-projects\"",
-    "test:e2e": "wp-cypress start"
+    "test:e2e": "wp-cypress stop && wp-cypress start && cypress open"
   },
   "dependencies": {
     "@bigbite/build-tools": "git+ssh://git@github.com:bigbite/build-tools.git#1.0.0-beta.6",
