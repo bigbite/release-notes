@@ -1,0 +1,4 @@
+<?xml version="1.0"?>
+<ruleset name="release-notes Rules">
+	<rule ref="./vendor/bigbite/phpcs-config/BigBite" />
+</ruleset>
