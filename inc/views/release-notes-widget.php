@@ -1,7 +1,7 @@
 <?php
-	$version            = get_post_meta( get_the_ID(), 'version', true );
-	$date               = get_post_meta( get_the_ID(), 'release_date', true );
-		$version_string = 'Version <span class="release-note-meta release-note-version ' . ( empty( $version ) ? 'empty' : '' ) . '">[' . esc_html( $version ) . ']</span>'
+	$version        = get_post_meta( get_the_ID(), 'version', true );
+	$date           = get_post_meta( get_the_ID(), 'release_date', true );
+	$version_string = 'Version <span class="release-note-meta release-note-version ' . ( empty( $version ) ? 'empty' : '' ) . '">[' . esc_html( $version ) . ']</span>'
 ?>
 
 <article class="release-note-widget">
