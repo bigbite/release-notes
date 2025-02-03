@@ -22,55 +22,14 @@ class PostType {
 	public function register_meta(): void {
 		register_post_meta(
 			'release-note',
-			'version_object',
+			'version',
 			[
 				'show_in_rest' => [
 					'schema' => [
-							'type'       => 'object',
-							'properties' => [
-									'major' => [
-											'type' => 'integer',
-											'default' => 0,
-									],
-									'minor' => [
-											'type' => 'integer',
-											'default' => 0,
-									],
-									'patch' => [
-											'type' => 'integer',
-											'default' => 0,
-									],
-									'prerelease' => [
-											'type' => 'string',
-											'default' => '',
-									],
-									'prerelease_version' => [
-											'type' => 'integer',
-											'default' => 0,
-									],
-							],
+						'type'    => 'string',
+						'default'	=> '0.0.0',
 					],
-			],
-				'single'       => true,
-				'type'         => 'object',
-				'default'      => [
-					'major'                 => 0,
-					'minor'                 => 0,
-					'patch'                 => 0,
-					'prerelease'            => '',
-					'prerelease_version'    => 0,
 				],
-			]
-		);
-
-		/**
-		 * Deprecated: This is for backwards compatibility with the old version meta
-		 */
-		register_post_meta(
-			'release-note',
-			'version',
-			[
-				'show_in_rest' => true,
 				'single'       => true,
 				'type'         => 'string',
 			],
@@ -83,16 +42,6 @@ class PostType {
 				'show_in_rest' => true,
 				'single'       => true,
 				'type'         => 'string',
-			]
-		);
-		register_post_meta(
-			'release-note',
-			'is_pre_release',
-			[
-				'show_in_rest' => true,
-				'single'       => true,
-				'type'         => 'boolean',
-				'default'      => false,
 			]
 		);
 	}
