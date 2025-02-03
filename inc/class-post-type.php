@@ -24,9 +24,42 @@ class PostType {
 			'release-note',
 			'version',
 			[
-				'show_in_rest' => true,
+				'show_in_rest' => [
+					'schema' => [
+							'type'       => 'object',
+							'properties' => [
+									'major' => [
+											'type' => 'integer',
+											'default' => 0,
+									],
+									'minor' => [
+											'type' => 'integer',
+											'default' => 0,
+									],
+									'patch' => [
+											'type' => 'integer',
+											'default' => 0,
+									],
+									'prerelease' => [
+											'type' => 'string',
+											'default' => '',
+									],
+									'prerelease_version' => [
+											'type' => 'integer',
+											'default' => 0,
+									],
+							],
+					],
+			],
 				'single'       => true,
-				'type'         => 'string',
+				'type'         => 'object',
+				'default'      => [
+					'major'                 => 0,
+					'minor'                 => 0,
+					'patch'                 => 0,
+					'prerelease'            => '',
+					'prerelease_version'    => 0,
+				],
 			]
 		);
 		register_post_meta(
