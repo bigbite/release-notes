@@ -31,8 +31,23 @@ class AdminBar {
 
 		$is_pre_release = get_post_meta( $latest_release->ID, 'is_pre_release', true );
 
-		$version  = get_post_meta( $latest_release->ID, 'version', true );
+		$version_meta  = get_post_meta( $latest_release->ID, 'version', true );
 		$base_url = admin_url( 'admin.php?page=release-notes' );
+
+		$version = '0.0.0';
+
+		if ( gettype( $version_meta ) !== 'array' ) {
+			$version = $version_meta;
+		} else {
+			$version = sprintf(
+				'%d.%d.%d%s%s',
+				$version_meta['major'],
+				$version_meta['minor'],
+				$version_meta['patch'],
+				$version_meta['prerelease'],
+				$version_meta['prerelease'] !== '' ? '.' . $version_meta['prerelease_version'] : ''
+			);
+		}
 
 		$wp_admin_bar->add_node( [
 			'id'     => 'release-note-version',
