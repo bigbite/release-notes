@@ -135,3 +135,7 @@ li.release-note.is-pre-release > a {
     background: #ca4a1f !important;
   }
 }
+
+.components-base-control:has(div > .release-notes__prerelease) {
+  flex: none;
+}
