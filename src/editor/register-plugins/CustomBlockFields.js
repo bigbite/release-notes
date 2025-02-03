@@ -2,7 +2,6 @@ const { PluginDocumentSettingPanel } = wp.editPost;
 const {
   PanelRow,
   DatePicker,
-  ToggleControl,
   SelectControl,
   __experimentalNumberControl: NumberControl,
   __experimentalText: Text,
@@ -40,7 +39,7 @@ function CustomBlockFields() {
       prerelease: prereleaseType,
       prerelease_version: prereleaseVersion,
     });
-  }
+  };
 
   /**
    * Updates the version object
@@ -69,7 +68,7 @@ function CustomBlockFields() {
     setMeta({ ...meta, release_date: val });
   };
 
-  useEffect( () => {
+  useEffect(() => {
     splitVersion();
   }, []);
 
