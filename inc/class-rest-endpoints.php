@@ -48,7 +48,6 @@ class RestEndpoints {
 		$title          = $params['name'];
 		$published_at   = $params['publishedAt'];
 		$tag            = $params['tagName'];
-		$is_pre_release = $params['isPrerelease'];
 
 		if ( $is_draft ) {
 			return;
@@ -76,7 +75,6 @@ class RestEndpoints {
 			'meta_input'   => [
 				'release_date'   => explode( 'T', gmdate( 'c', strtotime( $published_at ) ) )[0],
 				'version'        => $tag,
-				'is_pre_release' => $is_pre_release,
 			],
 		]);
 	}
