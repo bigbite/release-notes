@@ -29,29 +29,32 @@ class AdminBar {
 		$last_week    = strtotime( '-1 week' );
 		$release_date = strtotime( $latest_release->post_date_gmt );
 
-		$is_pre_release = get_post_meta( $latest_release->ID, 'is_pre_release', true );
+		$version        = get_post_meta( $latest_release->ID, 'version', true );
+		$version_object = get_post_meta( $latest_release->ID, 'version_object', true );
+		$base_url       = admin_url( 'admin.php?page=release-notes' );
 
-		$version_meta  = get_post_meta( $latest_release->ID, 'version', true );
-		$base_url = admin_url( 'admin.php?page=release-notes' );
+		$version_string = '0.0.0';
+		$is_pre_release = false;
 
-		$version = '0.0.0';
-
-		if ( gettype( $version_meta ) !== 'array' ) {
-			$version = $version_meta;
-		} else {
-			$version = sprintf(
+		if ( ! empty( $version ) ) {
+			$version_string = $version;
+			$is_pre_release = get_post_meta( get_the_ID(), 'is_pre_release', true );
+		} elseif ( ! empty( $version_object ) ) {
+			$version_string = sprintf(
 				'%d.%d.%d%s%s',
-				$version_meta['major'],
-				$version_meta['minor'],
-				$version_meta['patch'],
-				$version_meta['prerelease'],
-				$version_meta['prerelease'] !== '' ? '.' . $version_meta['prerelease_version'] : ''
+				$version_object['major'],
+				$version_object['minor'],
+				$version_object['patch'],
+				$version_object['prerelease'],
+				$version_object['prerelease'] !== '' ? '.' . $version_object['prerelease_version'] : ''
 			);
+
+			$is_pre_release = $version_object['prerelease'] !== '';
 		}
 
 		$wp_admin_bar->add_node( [
 			'id'     => 'release-note-version',
-			'title'  => sprintf( 'Version %s', $version ),
+			'title'  => sprintf( 'Version %s', $version_string ),
 			'href'   => sprintf( '%s&release-id=%d', $base_url, $latest_release->ID ),
 			'parent' => 'top-secondary',
 			'meta'   => [

@@ -20,7 +20,7 @@ function CustomBlockFields() {
   if (postType !== 'release-note') return null;
 
   const [meta, setMeta] = useEntityProp('postType', postType, 'meta');
-  const { version, is_pre_release: isPrerelease, release_date: releaseDate } = meta;
+  const { version, version_object, is_pre_release: isPrerelease, release_date: releaseDate } = meta;
 
   const onDateChange = (val) => {
     setMeta({ ...meta, release_date: val });
@@ -30,64 +30,66 @@ function CustomBlockFields() {
     <>
       <PluginDocumentSettingPanel initialOpen name="release-notes" title="Release Info">
         <PanelRow>
-          {/** If the version is a string, it's a legacy version, so we show a single input */}
-          {typeof version === 'string' ? (
+          {/** If the version input is still available render a string */}
+          {version !== '' ? (
             <InputControl
               value={version}
               onChange={(val) => setMeta({ ...meta, version: val })}
               label={__('Version Number')}
             />
           ) : (
-            <HStack>
-              <NumberControl
-                shiftStep={1}
-                min={0}
-                value={version.major}
-                onChange={(val) => setMeta({ ...meta, version: { ...version, major: val } })}
-                spinControls="none"
-              />
-              <Text variant="label">.</Text>
-              <NumberControl
-                shiftStep={1}
-                min={0}
-                value={version.minor}
-                onChange={(val) => setMeta({ ...meta, version: { ...version, minor: val } })}
-                spinControls="none"
-              />
-              <Text variant="label">.</Text>
-              <NumberControl
-                shiftStep={1}
-                min={0}
-                value={version.patch}
-                onChange={(val) => setMeta({ ...meta, version: { ...version, patch: val } })}
-                spinControls="none"
-              />
-              <SelectControl
-                className="release-notes__prerelease"
-                value={version.prerelease}
-                options={[
-                  { label: 'None', value: '' },
-                  { label: '-Alpha', value: '-alpha' },
-                  { label: '-Beta', value: '-beta' },
-                  { label: '-RC', value: '-rc' },
-                ]}
-                onChange={(val) => setMeta({ ...meta, version: { ...version, prerelease: val } })}
-              />
-              {version.prerelease && (
-                <>
-                  <Text variant="label">.</Text>
-                  <NumberControl
-                    shiftStep={1}
-                    min={0}
-                    value={version.prereleaseVersion}
-                    onChange={(val) =>
-                      setMeta({ ...meta, version: { ...version, prereleaseVersion: val } })
-                    }
-                    spinControls="none"
-                  />
-                </>
-              )}
-            </HStack>
+            <>
+              <HStack>
+                <NumberControl
+                  shiftStep={1}
+                  min={0}
+                  value={version_object.major}
+                  onChange={(val) => setMeta({ ...meta, version_object: { ...version_object, major: val } })}
+                  spinControls="none"
+                />
+                <Text variant="label">.</Text>
+                <NumberControl
+                  shiftStep={1}
+                  min={0}
+                  value={version_object.minor}
+                  onChange={(val) => setMeta({ ...meta, version_object: { ...version_object, minor: val } })}
+                  spinControls="none"
+                />
+                <Text variant="label">.</Text>
+                <NumberControl
+                  shiftStep={1}
+                  min={0}
+                  value={version_object.patch}
+                  onChange={(val) => setMeta({ ...meta, version_object: { ...version_object, patch: val } })}
+                  spinControls="none"
+                />
+                <SelectControl
+                  className="release-notes__prerelease"
+                  value={version_object.prerelease}
+                  options={[
+                    { label: 'None', value: '' },
+                    { label: '-Alpha', value: '-alpha' },
+                    { label: '-Beta', value: '-beta' },
+                    { label: '-RC', value: '-rc' },
+                  ]}
+                  onChange={(val) => setMeta({ ...meta, version_object: { ...version_object, prerelease: val } })}
+                />
+                {version_object.prerelease && (
+                  <>
+                    <Text variant="label">.</Text>
+                    <NumberControl
+                      shiftStep={1}
+                      min={0}
+                      value={version_object.prerelease_version}
+                      onChange={(val) =>
+                        setMeta({ ...meta, version_object: { ...version_object, prerelease_version: val } })
+                      }
+                      spinControls="none"
+                    />
+                  </>
+                )}
+              </HStack>
+            </>
           )}
         </PanelRow>
         <br />
@@ -100,7 +102,7 @@ function CustomBlockFields() {
             />
           </VStack>
         </PanelRow>
-        {typeof version === 'string' && (
+        {version !== '' && (
           <>
             <br />
             <PanelRow>

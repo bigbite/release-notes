@@ -22,7 +22,7 @@ class PostType {
 	public function register_meta(): void {
 		register_post_meta(
 			'release-note',
-			'version',
+			'version_object',
 			[
 				'show_in_rest' => [
 					'schema' => [
@@ -62,6 +62,20 @@ class PostType {
 				],
 			]
 		);
+
+		/**
+		 * Deprecated: This is for backwards compatibility with the old version meta
+		 */
+		register_post_meta(
+			'release-note',
+			'version',
+			[
+				'show_in_rest' => true,
+				'single'       => true,
+				'type'         => 'string',
+			],
+		);
+
 		register_post_meta(
 			'release-note',
 			'release_date',
