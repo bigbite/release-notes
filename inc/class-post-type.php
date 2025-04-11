@@ -12,6 +12,8 @@ class PostType {
 		add_action( 'init', [ $this, 'register_post_type' ], 0 );
 		add_filter( 'allowed_block_types_all', [ $this, 'allow_post_types' ], PHP_INT_MAX, 2 );
 		add_action( 'init', [ $this, 'register_meta' ] );
+		add_filter( 'manage_release-note_posts_columns', [ $this, 'add_columns' ] );
+		add_action( 'manage_release-note_posts_custom_column', [ $this, 'add_column_data' ], 10, 2 );
 	}
 
 	/**
@@ -154,5 +156,34 @@ class PostType {
 			],
 			default => $allowed_block_types,
 		};
+	}
+
+	/**
+	 * Add column
+	 *
+	 * @param string $column - column name
+	 * @param int    $post_id - post id
+	 * @return void
+	 */
+	public function add_columns( array $columns ): array {
+		$columns['version'] = __( 'Version', 'release-notes' );
+
+		return $columns;
+	}
+
+	/**
+	 * Add column data
+	 *
+	 * @param string $column - column name
+	 * @param int    $post_id - post id
+	 * @return void
+	 */
+	public function add_column_data( string $column, int $post_id ): void {
+		switch ( $column ) {
+			case 'version':
+				$version = get_post_meta( $post_id, 'version', true );
+				echo esc_html( $version );
+				break;
+		}
 	}
 }
