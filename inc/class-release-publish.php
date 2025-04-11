@@ -374,12 +374,14 @@ class ReleasePublish {
 
 		$content_arr = explode( "\n", $content );
 
+		$version = get_post_meta( $id, 'version', true );
+
 		$header_title = [
 			[
 				'type' => 'header',
 				'text' => [
 					'type' => 'plain_text',
-					'text' => get_post_meta( $id, 'is_pre_release', true ) ? __( 'New Pre-Release 🎉', 'release-notes' ) : __( 'New Release 🎉', 'release-notes' ),
+					'text' => str_contains( $version, '-' ) ? __( 'New Pre-Release 🎉', 'release-notes' ) : __( 'New Release 🎉', 'release-notes' ),
 				],
 			],
 		];
@@ -392,7 +394,7 @@ class ReleasePublish {
 					'text' => sprintf(
 						/* translators: %s: The version number. */
 						__( 'Version: %s', 'release-notes' ),
-						get_post_meta( $id, 'version', true )
+						$version,
 					),
 				],
 			],

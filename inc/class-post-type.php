@@ -24,11 +24,17 @@ class PostType {
 			'release-note',
 			'version',
 			[
-				'show_in_rest' => true,
+				'show_in_rest' => [
+					'schema' => [
+						'type'    => 'string',
+						'default'	=> '0.0.0',
+					],
+				],
 				'single'       => true,
 				'type'         => 'string',
-			]
+			],
 		);
+
 		register_post_meta(
 			'release-note',
 			'release_date',
@@ -36,16 +42,6 @@ class PostType {
 				'show_in_rest' => true,
 				'single'       => true,
 				'type'         => 'string',
-			]
-		);
-		register_post_meta(
-			'release-note',
-			'is_pre_release',
-			[
-				'show_in_rest' => true,
-				'single'       => true,
-				'type'         => 'boolean',
-				'default'      => false,
 			]
 		);
 	}

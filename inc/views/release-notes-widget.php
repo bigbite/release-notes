@@ -1,6 +1,6 @@
 <?php
-	$version = get_post_meta( get_the_ID(), 'version', true );
-	$date    = get_post_meta( get_the_ID(), 'release_date', true );
+$version        = get_post_meta( get_the_ID(), 'version', true );
+$date           = get_post_meta( get_the_ID(), 'release_date', true );
 ?>
 
 <article class="release-note-widget">
