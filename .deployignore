@@ -1,0 +1,16 @@
+# npm
+node_modules
+package-lock.json
+package.json
+
+# composer
+composer.lock
+
+# build tools
+src
+.phpcs.xml.dist
+webpack.config.js
+
+# other
+.gitignore
+README.md

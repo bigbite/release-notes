@@ -1,0 +1,15 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 2,
+  "name": "release-notes/markdown-parser",
+  "title": "Markdown Parser",
+  "attributes": {
+    "html": {
+      "type": "string"
+    }
+  },
+	"supports" : {
+		"inserter": false
+	},
+  "editorScript": "release-notes-script"
+}

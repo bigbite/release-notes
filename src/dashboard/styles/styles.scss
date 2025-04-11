@@ -1,0 +1,137 @@
+.release-note-single {
+  width: 540px;
+  margin: 10px auto 24px;
+  background-color: #fff;
+  padding: 10px 20px 23px;
+  border-radius: 2px;
+}
+
+.release-notes-pagination {
+  width: 540px;
+  display: block;
+  padding: 12px 20px;
+  text-transform: uppercase;
+  font-size: 14px;
+  border: 1px solid #0073aa;
+  text-align: center;
+  text-decoration: none;
+  margin: 20px auto;
+  font-weight: bold;
+
+  transition: all 0.2s ease-in-out;
+
+  &:hover, &:focus {
+    background: #0073aa;
+    color: #fff;
+  }
+}
+
+.release-note-header {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  align-items: center;
+  border-bottom: 1px solid #e8eaeb;
+  padding-bottom: 6px;
+  margin-bottom: 8px;
+
+  .is-empty & {
+    padding-bottom: 0;
+    margin-bottom: 0;
+    border-bottom: none;
+  }
+
+  .release-note-meta-wrapper:first-of-type {
+    display: flex;
+    justify-content: center;
+  }
+
+  .release-note-meta-wrapper:last-of-type {
+    display: flex;
+    justify-content: flex-end;
+  }
+}
+
+.release-note-single .release-note-header h1::before {
+  content: '';
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  background-color: #3fb950;
+  border-radius: 50%;
+  vertical-align: middle;
+  margin-right: 6px;
+}
+
+.release-note-single.is-pre-release .release-note-header h1::before {
+  content: '';
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  background-color: #f56e28;
+  border-radius: 50%;
+  vertical-align: middle;
+  margin-right: 6px;
+}
+
+h1.release-note-title {
+  font-size: 20px;
+}
+
+.release-note-meta:not(.empty) {
+  display: inline-block;
+  background-color: #e8eaeb;
+  font-size: 18px;
+  padding: 2px 4px;
+  border-radius: 4px;
+  font-family: 'Courier New', Courier, monospace;
+  width: fit-content;
+  height: fit-content;
+}
+
+.release-note-body * {
+  max-width: 100%;
+}
+
+.release-note-body .release-notes-list {
+  h2 {
+    font-size: 16px;
+  }
+
+  ul, ol {
+    list-style: inside;
+    margin-top: 0;
+    margin-bottom: 0;
+  }
+}
+
+.release-note-footer {
+  border-top: 1px solid #e8eaeb;
+  margin-top: 12px;
+  padding-top: 8px;
+
+  .is-empty & {
+    border-top: none;
+    padding-top: 0;
+    margin-top: 0;
+  }
+}
+
+li.release-note > a {
+  background: #3fb950 !important;
+  transition: background 0.2s ease-in-out !important;
+
+  &:hover, &:focus {
+    color: #fff !important;
+    background: #238636 !important;
+  }
+}
+
+li.release-note.is-pre-release > a {
+  background: #f56e28 !important;
+  transition: background 0.2s ease-in-out !important;
+
+  &:hover, &:focus {
+    color: #fff !important;
+    background: #ca4a1f !important;
+  }
+}
